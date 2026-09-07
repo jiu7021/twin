@@ -125,32 +125,10 @@
           <span>② 차체 사이드실 H값</span>
         </button>
 
-        <button id="sideNav-jig" onclick="switchProcessTab('jig')" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm">
+        <button id="sideNav-jig" onclick="switchProcessTab('jig')" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm whitespace-nowrap">
           <i data-lucide="component" class="w-5 h-5 text-snow-textMuted shrink-0"></i>
-          <span class="flex items-center gap-1.5">
-            <span>③ 6차종 범퍼 공용화 지그</span>
-            <span class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-cyan-950 text-cyan-400 border border-cyan-700">NEW</span>
-          </span>
+          <span class="font-medium truncate">③ 범퍼 6차종 공용화 지그</span>
         </button>
-
-        <div class="pt-5 text-xs font-bold uppercase tracking-wider text-snow-textMuted px-3 py-1">
-          실시간 라인 분석 (Live Analytics)
-        </div>
-
-        <div class="flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-snow-textSub hover:bg-snow-surface hover:text-white cursor-pointer text-sm font-medium" onclick="scrollToSection('spcSection')">
-          <i data-lucide="trending-up" class="w-4 h-4 text-snow-textMuted shrink-0"></i>
-          <span>SPC 트렌드 모니터</span>
-        </div>
-
-        <div class="flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-snow-textSub hover:bg-snow-surface hover:text-white cursor-pointer text-sm font-medium" onclick="scrollToSection('laserSection')">
-          <i data-lucide="activity" class="w-4 h-4 text-snow-textMuted shrink-0"></i>
-          <span>2D 광학 프로파일러</span>
-        </div>
-
-        <div class="flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-snow-textSub hover:bg-snow-surface hover:text-white cursor-pointer text-sm font-medium" onclick="scrollToSection('hingeSection')">
-          <i data-lucide="wrench" class="w-4 h-4 text-snow-textMuted shrink-0"></i>
-          <span>AI 힌지 보정 처방</span>
-        </div>
       </nav>
     </div>
 
@@ -164,7 +142,7 @@
         <span class="font-mono text-snow-emerald font-bold px-2 py-0.5 rounded-md bg-emerald-950/80 border border-emerald-800">RUNNING</span>
       </div>
       <div class="text-xs text-snow-textSub leading-relaxed font-mono">
-        Cycle Time: 48.2s | Comm: 6-Model
+        Cycle Time: 48.2s | 3-Process Twin
       </div>
     </div>
   </aside>
@@ -193,9 +171,6 @@
         <button id="soundBtn" onclick="toggleAudio()" class="p-2.5 rounded-2xl bg-snow-surface hover:bg-snow-surface2 border border-snow-border text-snow-textSub transition-all shadow-md" title="효과음 토글">
           <i id="soundIcon" data-lucide="volume-2" class="w-5 h-5 text-snow-cyan"></i>
         </button>
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-sm text-white shadow-lg border border-white/10">
-          DX
-        </div>
       </div>
     </header>
 
@@ -581,85 +556,85 @@
         <!-- Jig KPI Metric Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <!-- Card 1 -->
-          <div class="snow-card-blue p-6 text-white flex flex-col justify-between h-36 relative overflow-hidden">
+          <div class="snow-card-blue p-5 sm:p-6 text-white flex flex-col justify-between h-36 relative overflow-hidden break-keep">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-bold text-blue-100 uppercase tracking-wide">선택 차종 및 빔 전장</span>
-              <span class="p-2 rounded-xl bg-white/20 backdrop-blur-md"><i data-lucide="component" class="w-4 h-4"></i></span>
+              <span class="text-xs sm:text-sm font-bold text-blue-100 uppercase tracking-wide">선택 차종 및 빔 전장</span>
+              <span class="p-2 rounded-xl bg-white/20 backdrop-blur-md shrink-0"><i data-lucide="component" class="w-4 h-4"></i></span>
             </div>
             <div>
-              <div id="jigKpiModel" class="text-3xl sm:text-4xl font-black font-mono tracking-tight">DE EV <span class="text-sm font-medium text-blue-100">1.48m</span></div>
-              <div class="text-xs text-blue-100 mt-1 flex items-center gap-1.5 font-mono">
-                <span>차종 그룹: Group B (DE Platform)</span>
+              <div id="jigKpiModel" class="text-2xl sm:text-3xl font-black font-mono tracking-tight">DE EV <span class="text-sm font-medium text-blue-100">1.48m</span></div>
+              <div class="text-xs text-blue-100 mt-1 flex items-center gap-1.5 font-mono truncate">
+                <span>차종 그룹: Group B (DE)</span>
               </div>
             </div>
           </div>
 
           <!-- Card 2 -->
-          <div class="snow-card p-6 flex flex-col justify-between h-36">
+          <div class="snow-card p-5 sm:p-6 flex flex-col justify-between h-36 break-keep">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-bold text-snow-textMuted uppercase tracking-wide">빔 곡률 & 반대편 들뜸량</span>
-              <span class="p-2 rounded-xl bg-snow-surface2 text-snow-cyan border border-snow-border"><i data-lucide="move-vertical" class="w-4 h-4"></i></span>
+              <span class="text-xs sm:text-sm font-bold text-snow-textMuted uppercase tracking-wide">빔 곡률 & 들뜸량</span>
+              <span class="p-2 rounded-xl bg-snow-surface2 text-snow-cyan border border-snow-border shrink-0"><i data-lucide="move-vertical" class="w-4 h-4"></i></span>
             </div>
             <div>
-              <div id="jigKpiSag" class="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight">R 450 <span class="text-sm text-snow-cyan font-bold">+248 mm</span></div>
-              <div id="jigKpiSagSub" class="text-xs text-snow-amber mt-1 flex items-center gap-1.5 font-mono font-medium">
-                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i><span>우측 체결 시 좌측 뜸 발생</span>
+              <div id="jigKpiSag" class="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">R 450 <span class="text-sm text-snow-cyan font-bold">+248 mm</span></div>
+              <div id="jigKpiSagSub" class="text-xs text-snow-emerald mt-1 flex items-center gap-1 font-mono font-medium truncate">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-snow-emerald shrink-0"></i><span>서보 리프트 완전 지지 (0mm)</span>
               </div>
             </div>
           </div>
 
           <!-- Card 3 -->
-          <div class="snow-card p-6 flex flex-col justify-between h-36">
+          <div class="snow-card p-5 sm:p-6 flex flex-col justify-between h-36 break-keep">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-bold text-snow-textMuted uppercase tracking-wide">듀얼 원통형 내경 클램프</span>
-              <span class="p-2 rounded-xl bg-snow-surface2 text-blue-400 border border-snow-border"><i data-lucide="cylinder" class="w-4 h-4"></i></span>
+              <span class="text-xs sm:text-sm font-bold text-snow-textMuted uppercase tracking-wide">듀얼 원통형 내경 클램프</span>
+              <span class="p-2 rounded-xl bg-snow-surface2 text-blue-400 border border-snow-border shrink-0"><i data-lucide="cylinder" class="w-4 h-4"></i></span>
             </div>
             <div>
-              <div id="jigKpiClamp" class="text-2xl sm:text-3xl font-black font-mono text-snow-cyan tracking-tight">클램프 #2 세로 하강 체결</div>
-              <div class="text-xs text-snow-textMuted mt-1 font-mono">#1 상부 대기(OFF) / #2 수직 하강 파이프 내경 삽입 완료</div>
+              <div id="jigKpiClamp" class="text-xl sm:text-2xl font-black font-mono text-snow-cyan tracking-tight truncate">클램프 #2 수직 체결</div>
+              <div id="jigKpiClampSub" class="text-xs text-snow-textMuted mt-1 font-mono truncate">#1 상부 대기 / #2 수직 하강 체결</div>
             </div>
           </div>
 
           <!-- Card 4 -->
-          <div class="snow-card p-6 flex flex-col justify-between h-36">
+          <div class="snow-card p-5 sm:p-6 flex flex-col justify-between h-36 break-keep">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-bold text-snow-textMuted uppercase tracking-wide">종합 간섭 및 지지 판정</span>
-              <span class="p-2 rounded-xl bg-snow-surface2 text-snow-emerald border border-snow-border"><i data-lucide="shield-check" class="w-4 h-4"></i></span>
+              <span class="text-xs sm:text-sm font-bold text-snow-textMuted uppercase tracking-wide">종합 간섭 및 지지 판정</span>
+              <span class="p-2 rounded-xl bg-snow-surface2 text-snow-emerald border border-snow-border shrink-0"><i data-lucide="shield-check" class="w-4 h-4"></i></span>
             </div>
             <div>
-              <div id="jigKpiStatus" class="text-2xl sm:text-3xl font-black font-mono text-snow-emerald tracking-tight">이상 없음 (OK)</div>
-              <div id="jigKpiStatusSub" class="text-xs text-snow-emerald mt-1 font-mono">가이드 간섭 해소 & 서보 리프트 지지</div>
+              <div id="jigKpiStatus" class="text-xl sm:text-2xl font-black font-mono text-snow-emerald tracking-tight truncate">이상 없음 (OK)</div>
+              <div id="jigKpiStatusSub" class="text-xs text-snow-emerald mt-1 font-mono truncate">가이드 간섭 해소 & 서보 지지</div>
             </div>
           </div>
         </div>
 
         <!-- 6 Models Selector Queue Bar -->
-        <div class="snow-card p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
-          <div class="flex items-center gap-4">
+        <div class="snow-card p-5 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+          <div class="flex items-center gap-4 min-w-0">
             <div class="p-3 rounded-2xl bg-snow-surface2 border border-snow-border text-snow-cyan shrink-0">
               <i data-lucide="git-branch" class="w-5 h-5"></i>
             </div>
-            <div>
-              <div class="flex items-center gap-3">
-                <span class="text-base font-bold text-white">6차종 범퍼 빔 투입 선택기 (Multi-Model Common Jig)</span>
-                <span id="jigModelBadge" class="px-3 py-1 rounded-xl text-xs font-mono font-bold bg-blue-950 text-snow-cyan border border-blue-700">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2.5 flex-wrap">
+                <span class="text-sm sm:text-base font-bold text-white whitespace-nowrap">6차종 범퍼 빔 투입 큐</span>
+                <span id="jigModelBadge" class="px-2.5 py-0.5 rounded-xl text-xs font-mono font-bold bg-blue-950 text-snow-cyan border border-blue-700 whitespace-nowrap">
                   DE EV (1.48m / R450)
                 </span>
               </div>
-              <p class="text-xs sm:text-sm text-snow-textMuted mt-1 leading-relaxed">
-                차종을 선택하면 곡률에 따른 들뜸 높이가 연산되고, <strong>상부 전용 원통형 클램프가 세로로 위에서 아래로 하강하여 파이프 내경 안으로 삽입 체결</strong>됩니다.
+              <p class="text-xs sm:text-sm text-snow-textMuted mt-1 break-keep leading-relaxed">
+                차종 선택 시 곡률 들뜸을 연산하고, <strong>상부 전용 원통형 클램프가 세로로 하강</strong>하여 파이프 내경에 체결됩니다.
               </p>
             </div>
           </div>
 
-          <!-- 6 Car Model Buttons -->
-          <div class="flex items-center gap-2 flex-wrap self-end lg:self-center">
-            <button onclick="selectBumperModel(0)" id="jigBtn-0" class="jig-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight">NH2 (1.34m)</button>
-            <button onclick="selectBumperModel(1)" id="jigBtn-1" class="jig-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight">FE (1.42m)</button>
-            <button onclick="selectBumperModel(2)" id="jigBtn-2" class="jig-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight">DE (1.45m)</button>
-            <button onclick="selectBumperModel(3)" id="jigBtn-3" class="jig-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-mono font-bold transition-all bg-blue-600 text-white shadow-md">DE EV (1.48m)</button>
-            <button onclick="selectBumperModel(4)" id="jigBtn-4" class="jig-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight">DE PE (1.50m)</button>
-            <button onclick="selectBumperModel(5)" id="jigBtn-5" class="jig-btn px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight">DE PBV (1.54m)</button>
+          <!-- 6 Car Model Buttons (Clean Grid Layout) -->
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full lg:w-auto shrink-0">
+            <button onclick="selectBumperModel(0)" id="jigBtn-0" class="jig-btn px-2.5 py-2 rounded-xl text-xs font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight text-center whitespace-nowrap">NH2 (1.34m)</button>
+            <button onclick="selectBumperModel(1)" id="jigBtn-1" class="jig-btn px-2.5 py-2 rounded-xl text-xs font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight text-center whitespace-nowrap">FE (1.42m)</button>
+            <button onclick="selectBumperModel(2)" id="jigBtn-2" class="jig-btn px-2.5 py-2 rounded-xl text-xs font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight text-center whitespace-nowrap">DE (1.45m)</button>
+            <button onclick="selectBumperModel(3)" id="jigBtn-3" class="jig-btn px-2.5 py-2 rounded-xl text-xs font-mono font-bold transition-all bg-blue-600 text-white shadow-md text-center whitespace-nowrap">DE EV (1.48m)</button>
+            <button onclick="selectBumperModel(4)" id="jigBtn-4" class="jig-btn px-2.5 py-2 rounded-xl text-xs font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight text-center whitespace-nowrap">DE PE (1.50m)</button>
+            <button onclick="selectBumperModel(5)" id="jigBtn-5" class="jig-btn px-2.5 py-2 rounded-xl text-xs font-mono font-bold transition-all bg-snow-surface2 border border-snow-border text-snow-textSub hover:border-snow-borderLight text-center whitespace-nowrap">DE PBV (1.54m)</button>
           </div>
         </div>
 
@@ -742,31 +717,31 @@
                   </button>
                 </div>
 
-                <!-- Toggle 2: Retractable End Guide -->
-                <div class="p-4 rounded-2xl bg-snow-surface2 border border-snow-border flex items-center justify-between">
-                  <div>
+                <!-- Toggle 2: Retractable Side Guide -->
+                <div class="p-4 rounded-2xl bg-snow-surface2 border border-snow-border flex items-center justify-between gap-3 break-keep">
+                  <div class="min-w-0">
                     <div class="text-sm font-bold text-white flex items-center gap-2">
-                      <i data-lucide="minimize-2" class="w-4 h-4 text-snow-amber"></i>
-                      <span>인입식 측면 엔드 가이드</span>
+                      <i data-lucide="minimize-2" class="w-4 h-4 text-snow-amber shrink-0"></i>
+                      <span class="whitespace-nowrap">인입식 측면 가이드</span>
                     </div>
-                    <p class="text-xs text-snow-textMuted mt-0.5">긴 빔 투입 시 하강 인입하여 간섭 해소</p>
+                    <p class="text-xs text-snow-textMuted mt-0.5 truncate">장척 빔 투입 시 하강 인입 간섭 해소</p>
                   </div>
-                  <button id="toggleGuideBtn" onclick="toggleEndGuide()" class="px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-blue-600 hover:bg-blue-500 text-white shadow-md">
+                  <button id="toggleGuideBtn" onclick="toggleEndGuide()" class="w-32 shrink-0 px-3 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-blue-600 hover:bg-blue-500 text-white shadow-md text-center whitespace-nowrap">
                     가이드 ON
                   </button>
                 </div>
 
                 <!-- Toggle 3: Pipe Clamping Action -->
-                <div class="p-4 rounded-2xl bg-snow-surface2 border border-snow-border flex items-center justify-between">
-                  <div>
+                <div class="p-4 rounded-2xl bg-snow-surface2 border border-snow-border flex items-center justify-between gap-3 break-keep">
+                  <div class="min-w-0">
                     <div class="text-sm font-bold text-white flex items-center gap-2">
-                      <i data-lucide="cylinder" class="w-4 h-4 text-snow-cyan"></i>
-                      <span>파이프 내경 클램프 체결</span>
+                      <i data-lucide="cylinder" class="w-4 h-4 text-snow-cyan shrink-0"></i>
+                      <span class="whitespace-nowrap">파이프 내경 클램프</span>
                     </div>
-                    <p class="text-xs text-snow-textMuted mt-0.5">선택된 원통형 클램프 전진/후진</p>
+                    <p class="text-xs text-snow-textMuted mt-0.5 truncate">선택된 원통형 클램프 수직 승하강</p>
                   </div>
-                  <button id="toggleClampBtn" onclick="toggleMandrelClamp()" class="px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-snow-surface hover:bg-snow-border text-snow-cyan border border-snow-border">
-                    전진 체결 ON
+                  <button id="toggleClampBtn" onclick="toggleMandrelClamp()" class="w-32 shrink-0 px-3 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-snow-surface hover:bg-snow-border text-snow-cyan border border-snow-border text-center whitespace-nowrap">
+                    세로 하강 체결 ON
                   </button>
                 </div>
               </div>
@@ -776,30 +751,30 @@
             <div class="snow-card p-6 space-y-3.5 border-blue-500/40 bg-gradient-to-b from-snow-surface to-[#1a2333]">
               <div class="flex items-center justify-between border-b border-snow-border pb-3.5">
                 <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-2xl bg-blue-950 border border-blue-700 flex items-center justify-center text-blue-400">
+                  <div class="w-8 h-8 rounded-2xl bg-blue-950 border border-blue-700 flex items-center justify-center text-blue-400 shrink-0">
                     <i data-lucide="check-check" class="w-4 h-4"></i>
                   </div>
-                  <h3 class="text-sm sm:text-base font-bold text-white">가상 시운전 해석 매트릭스</h3>
+                  <h3 class="text-sm sm:text-base font-bold text-white whitespace-nowrap">가상 시운전 해석 매트릭스</h3>
                 </div>
-                <span class="text-xs font-mono bg-blue-950 text-blue-300 px-2.5 py-1 rounded-xl border border-blue-800 font-bold">Virtual Twin</span>
+                <span class="text-xs font-mono bg-blue-950 text-blue-300 px-2.5 py-1 rounded-xl border border-blue-800 font-bold shrink-0">Virtual Twin</span>
               </div>
 
-              <div class="space-y-3 text-xs sm:text-sm">
-                <div class="p-3.5 rounded-2xl bg-[#141416]/90 border border-snow-border flex justify-between items-center">
-                  <span class="text-snow-textMuted">파이프 삽입 홀 오프셋:</span>
-                  <span id="matrixPipePos" class="font-mono text-white font-bold">X: +520 mm (Group B)</span>
+              <div class="space-y-2.5 text-xs sm:text-sm">
+                <div class="p-3 rounded-2xl bg-[#141416]/90 border border-snow-border flex items-center justify-between gap-2">
+                  <span class="text-snow-textMuted font-medium shrink-0 break-keep">파이프 홀 위치:</span>
+                  <span id="matrixPipePos" class="font-mono text-white font-bold text-right truncate">X: +520 mm (Group B)</span>
                 </div>
-                <div class="p-3.5 rounded-2xl bg-[#141416]/90 border border-snow-border flex justify-between items-center">
-                  <span class="text-snow-textMuted">원통형 클램프 작동:</span>
-                  <span id="matrixClampActive" class="font-mono text-snow-cyan font-bold">클램프 #2 전진 체결 (ACTIVE)</span>
+                <div class="p-3 rounded-2xl bg-[#141416]/90 border border-snow-border flex items-center justify-between gap-2">
+                  <span class="text-snow-textMuted font-medium shrink-0 break-keep">원통형 클램프:</span>
+                  <span id="matrixClampActive" class="font-mono text-snow-cyan font-bold text-right truncate">클램프 #2 수직 하강 체결</span>
                 </div>
-                <div class="p-3.5 rounded-2xl bg-[#141416]/90 border border-snow-border flex justify-between items-center">
-                  <span class="text-snow-textMuted">서보 리프트 승강 높이:</span>
-                  <span id="matrixLiftHeight" class="font-mono text-snow-emerald font-bold">+248 mm (들뜸 0mm 완벽 지지)</span>
+                <div class="p-3 rounded-2xl bg-[#141416]/90 border border-snow-border flex items-center justify-between gap-2">
+                  <span class="text-snow-textMuted font-medium shrink-0 break-keep">서보 리프트:</span>
+                  <span id="matrixLiftHeight" class="font-mono text-snow-emerald font-bold text-right truncate">+248 mm (밀착 지지 OK)</span>
                 </div>
-                <div class="p-3.5 rounded-2xl bg-[#141416]/90 border border-snow-border flex justify-between items-center">
-                  <span class="text-snow-textMuted">측면 가이드 클리어런스:</span>
-                  <span id="matrixGuideClearance" class="font-mono text-snow-emerald font-bold">+18 mm (간섭 없음)</span>
+                <div class="p-3 rounded-2xl bg-[#141416]/90 border border-snow-border flex items-center justify-between gap-2">
+                  <span class="text-snow-textMuted font-medium shrink-0 break-keep">측면 가이드:</span>
+                  <span id="matrixGuideClearance" class="font-mono text-snow-emerald font-bold text-right truncate">OPEN (인입 완료, 간섭 0건)</span>
                 </div>
               </div>
             </div>
@@ -2130,7 +2105,6 @@
       if (mandrelPin1 && mandrelPin2) {
         if (isGroup1) {
           mandrelPin1.visible = true;
-          // When engaged: descends into pipe (Y = 0.68). When retracted: ascends up (Y = 1.08)
           mandrelPin1.position.y = isMandrelClampEngaged ? 0.68 : 1.08;
           mandrelPin1.material.color.setHex(isMandrelClampEngaged ? 0x06b6d4 : 0x38bdf8);
 
@@ -2139,11 +2113,12 @@
           mandrelPin2.position.y = 1.25; // Fully retracted up
           mandrelPin2.material.color.setHex(0x475569);
 
-          document.getElementById('jigKpiClamp').textContent = isMandrelClampEngaged ? '클램프 #1 수직 하강 체결' : '클램프 #1 상부 대기(OFF)';
-          document.getElementById('matrixClampActive').textContent = isMandrelClampEngaged ? '클램프 #1 세로 하강 삽입 (ACTIVE)' : '클램프 #1 상부 후진 대기';
+          document.getElementById('jigKpiClamp').textContent = isMandrelClampEngaged ? '클램프 #1 수직 체결' : '클램프 #1 상부 대기';
+          const subEl = document.getElementById('jigKpiClampSub');
+          if (subEl) subEl.textContent = isMandrelClampEngaged ? '#1 수직 하강 체결 / #2 상부 대기' : '#1 상부 대기(OFF)';
+          document.getElementById('matrixClampActive').textContent = isMandrelClampEngaged ? '클램프 #1 수직 하강 체결' : '클램프 #1 상부 대기';
         } else {
           mandrelPin2.visible = true;
-          // Descends into pipe (Y = 0.68) vs Ascends up (Y = 1.08)
           mandrelPin2.position.y = isMandrelClampEngaged ? 0.68 : 1.08;
           mandrelPin2.material.color.setHex(isMandrelClampEngaged ? 0x06b6d4 : 0x38bdf8);
 
@@ -2152,8 +2127,10 @@
           mandrelPin1.position.y = 1.25; // Fully retracted up
           mandrelPin1.material.color.setHex(0x475569);
 
-          document.getElementById('jigKpiClamp').textContent = isMandrelClampEngaged ? '클램프 #2 수직 하강 체결' : '클램프 #2 상부 대기(OFF)';
-          document.getElementById('matrixClampActive').textContent = isMandrelClampEngaged ? '클램프 #2 세로 하강 삽입 (ACTIVE)' : '클램프 #2 상부 후진 대기';
+          document.getElementById('jigKpiClamp').textContent = isMandrelClampEngaged ? '클램프 #2 수직 체결' : '클램프 #2 상부 대기';
+          const subEl = document.getElementById('jigKpiClampSub');
+          if (subEl) subEl.textContent = isMandrelClampEngaged ? '#2 수직 하강 체결 / #1 상부 대기' : '#2 상부 대기(OFF)';
+          document.getElementById('matrixClampActive').textContent = isMandrelClampEngaged ? '클램프 #2 수직 하강 체결' : '클램프 #2 상부 대기';
         }
       }
 
@@ -2170,19 +2147,19 @@
       if (isServoLiftOn) {
         liftBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white shadow-md';
         liftBtn.textContent = '리프트 ON';
-        liftTag.textContent = `서보 리프트: +${m.sagHeight}mm 지지 완료 (들뜸 0mm)`;
+        liftTag.textContent = `서보 리프트: +${m.sagHeight}mm 지지 완료 (0mm)`;
         liftTag.className = 'text-snow-emerald font-bold bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800';
-        sagSub.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-snow-emerald"></i><span class="text-snow-emerald">서보 리프트 완전 밀착 지지 (들뜸 0mm)</span>`;
+        sagSub.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-snow-emerald"></i><span class="text-snow-emerald">서보 리프트 완전 지지 (0mm)</span>`;
         if (sagWarningArrow) sagWarningArrow.visible = false;
-        document.getElementById('matrixLiftHeight').textContent = `+${m.sagHeight} mm (들뜸 0mm 완벽 지지)`;
+        document.getElementById('matrixLiftHeight').textContent = `+${m.sagHeight} mm (밀착 지지 OK)`;
       } else {
         liftBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-rose-950/90 text-snow-rose border border-rose-800';
-        liftBtn.textContent = '리프트 OFF (뜸 발생)';
-        liftTag.textContent = `뜸 감지: +${m.sagHeight}mm 허공 뜸 발생! (리프트 ON 필요)`;
+        liftBtn.textContent = '리프트 OFF (뜸)';
+        liftTag.textContent = `뜸 감지: +${m.sagHeight}mm 들뜸 발생! (리프트 ON 필요)`;
         liftTag.className = 'text-snow-rose font-bold bg-rose-950/80 px-2 py-0.5 rounded-md border border-rose-800';
-        sagSub.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-snow-rose"></i><span class="text-snow-rose">좌측 뜸 감지 (+${m.sagHeight}mm) ⚠️</span>`;
+        sagSub.innerHTML = `<i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-snow-rose"></i><span class="text-snow-rose">좌측 뜸 발생 (+${m.sagHeight}mm) ⚠️</span>`;
         if (sagWarningArrow) sagWarningArrow.visible = true;
-        document.getElementById('matrixLiftHeight').textContent = `OFF (+${m.sagHeight}mm 허공 들뜸 발생 ⚠️)`;
+        document.getElementById('matrixLiftHeight').textContent = `OFF (+${m.sagHeight}mm 들뜸 ⚠️)`;
       }
 
       // 3. Retractable End Guide Interference Check
@@ -2205,38 +2182,38 @@
       const matrixClearance = document.getElementById('matrixGuideClearance');
 
       if (isEndGuideOn) {
-        guideBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-blue-600 hover:bg-blue-500 text-white shadow-md';
-        guideBtn.textContent = '가이드 ON (전진)';
+        guideBtn.className = 'w-32 shrink-0 px-3 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-blue-600 hover:bg-blue-500 text-white shadow-md text-center whitespace-nowrap';
+        guideBtn.textContent = '가이드 ON';
         if (isCollision) {
           guideTag.textContent = `가이드 간섭 1건 충돌 발생! (가이드 OFF 필요)`;
           guideTag.className = 'text-snow-rose font-bold bg-rose-950/80 px-2 py-0.5 rounded-md border border-rose-800 animate-pulse';
           statusText.textContent = '간섭 1건 (충돌 ⚠️)';
-          statusText.className = 'text-2xl sm:text-3xl font-black font-mono text-snow-rose tracking-tight';
-          statusSub.textContent = `전장 ${m.length}m 범퍼와 고정 가이드 충돌!`;
-          statusSub.className = 'text-xs text-snow-rose mt-1 font-mono';
-          matrixClearance.textContent = `-25 mm (물리적 충돌 간섭 1건 ⚠️)`;
-          matrixClearance.className = 'font-mono text-snow-rose font-bold';
+          statusText.className = 'text-xl sm:text-2xl font-black font-mono text-snow-rose tracking-tight truncate';
+          statusSub.textContent = `전장 ${m.length}m 범퍼 간섭 발생`;
+          statusSub.className = 'text-xs text-snow-rose mt-1 font-mono truncate';
+          matrixClearance.textContent = `-25 mm (간섭 충돌 ⚠️)`;
+          matrixClearance.className = 'font-mono text-xs sm:text-sm text-snow-rose font-bold text-right truncate';
         } else {
           guideTag.textContent = `가이드: 측면 고정 (공용화 적합 OK)`;
           guideTag.className = 'text-snow-emerald font-bold bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800';
           statusText.textContent = '이상 없음 (OK)';
-          statusText.className = 'text-2xl sm:text-3xl font-black font-mono text-snow-emerald tracking-tight';
-          statusSub.textContent = '측면 엔드 가이드 안정적 가이드 완료';
-          statusSub.className = 'text-xs text-snow-emerald mt-1 font-mono';
-          matrixClearance.textContent = `+15 mm (안전 간극 확보 OK)`;
-          matrixClearance.className = 'font-mono text-snow-emerald font-bold';
+          statusText.className = 'text-xl sm:text-2xl font-black font-mono text-snow-emerald tracking-tight truncate';
+          statusSub.textContent = '측면 가이드 안정적 지지';
+          statusSub.className = 'text-xs text-snow-emerald mt-1 font-mono truncate';
+          matrixClearance.textContent = `+15 mm (정상 지지 OK)`;
+          matrixClearance.className = 'font-mono text-xs sm:text-sm text-snow-emerald font-bold text-right truncate';
         }
       } else {
-        guideBtn.className = 'px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-snow-surface2 hover:bg-snow-border text-snow-textSub border border-snow-border';
-        guideBtn.textContent = '가이드 OFF (인입 퇴피)';
+        guideBtn.className = 'w-32 shrink-0 px-3 py-2 rounded-xl font-mono text-xs font-bold transition-all bg-snow-surface2 hover:bg-snow-border text-snow-textSub border border-snow-border text-center whitespace-nowrap';
+        guideBtn.textContent = '가이드 OFF (인입)';
         guideTag.textContent = `가이드: 하강 인입 (장척 빔 간섭 0건 해소)`;
         guideTag.className = 'text-snow-cyan font-bold bg-cyan-950/80 px-2 py-0.5 rounded-md border border-cyan-800';
         statusText.textContent = '이상 없음 (OK)';
-        statusText.className = 'text-2xl sm:text-3xl font-black font-mono text-snow-emerald tracking-tight';
-        statusSub.textContent = '가이드 인입으로 전장 간섭 완전 배제';
-        statusSub.className = 'text-xs text-snow-cyan mt-1 font-mono';
-        matrixClearance.textContent = `OPEN (가이드 완전 인입, 무한 전장 수용)`;
-        matrixClearance.className = 'font-mono text-snow-cyan font-bold';
+        statusText.className = 'text-xl sm:text-2xl font-black font-mono text-snow-emerald tracking-tight truncate';
+        statusSub.textContent = '가이드 인입 완료 (간섭 없음)';
+        statusSub.className = 'text-xs text-snow-cyan mt-1 font-mono truncate';
+        matrixClearance.textContent = `OPEN (인입 완료, 간섭 0건)`;
+        matrixClearance.className = 'font-mono text-xs sm:text-sm text-snow-emerald font-bold text-right truncate';
       }
 
       // Re-render Tube Geometry based on state
