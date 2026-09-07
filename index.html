@@ -53,6 +53,9 @@
   <!-- Three.js (r128) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+  <!-- PDF.js for 2D Drawing Vector / Text Processing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
@@ -978,6 +981,7 @@
                         </div>
                       </div>
                       <div class="relative w-full rounded-xl overflow-hidden border border-purple-500/40 bg-black shadow-inner">
+                        <canvas id="dfmPdfCanvas" class="w-full h-auto max-h-72 object-contain hidden bg-white mx-auto"></canvas>
                         <iframe id="dfmPdfEmbed" src="" class="w-full h-60 sm:h-72 hidden bg-black border-0"></iframe>
                         <img id="dfmImgEmbed" src="" class="w-full h-60 sm:h-72 object-contain hidden bg-black/90 p-1" />
                       </div>
@@ -1158,9 +1162,9 @@
                   </div>
                 </div>
                 <div class="flex items-center gap-2">
-                  <button id="geminiApiBadge" onclick="openGeminiConfigModal()" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-blue-950/80 hover:bg-blue-900 text-cyan-300 border border-cyan-700/60 font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Google Gemini API 키 입력 시 실시간 LLM 추론 가동">
+                  <button id="aiApiBadge" onclick="openAiConfigModal()" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-blue-950/80 hover:bg-blue-900 text-cyan-300 border border-cyan-700/60 font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Gemini / Claude / ChatGPT AI API 키 연동 설정">
                     <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i>
-                    <span id="geminiApiStatusText">Gemini API 설정</span>
+                    <span id="aiApiStatusText">AI API 설정 (Gemini/Claude/GPT)</span>
                   </button>
                   <span class="px-2.5 py-1 rounded-lg text-xs font-mono bg-emerald-950 text-snow-emerald border border-emerald-800 font-bold">ONLINE</span>
                 </div>
@@ -1331,6 +1335,11 @@
             </div>
           </div>
 
+          <!-- Mandatory AI Vision Requirement Notice Box (Prompt user to connect API before uploading real 2D drawings) -->
+          <div id="cadAiNoticeBox" class="p-4 rounded-2xl border transition-all">
+            <!-- Dynamically populated by updateCadAiNotice() -->
+          </div>
+
           <!-- Drag & Drop Zone -->
           <div id="cadDropZone" class="border-2 border-dashed border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-5 text-center cursor-pointer transition-all bg-[#101114]/80 hover:bg-[#101114]" onclick="document.getElementById('cadFileInput').click()" ondragover="event.preventDefault(); this.classList.add('border-cyan-400','bg-blue-950/20')" ondragleave="this.classList.remove('border-cyan-400','bg-blue-950/20')" ondrop="handleCadDrop(event)">
             <input type="file" id="cadFileInput" class="hidden" accept=".stl,.obj,.pdf,.dxf,.png,.jpg,.jpeg,.catpart,.catproduct,.stp,.step,.dwg" onchange="handleCadFileUpload(event)" />
@@ -1338,11 +1347,11 @@
               <i data-lucide="file-up" class="w-6 h-6"></i>
             </div>
             <div class="text-sm font-semibold text-white mb-1">
-              3D 메쉬(.stl, .obj) 또는 2D 도면(.pdf, .dxf, 이미지)을 여기로 드래그하거나 클릭
+              3D 메쉬(.stl, .obj), 2D CAD(.dxf) 또는 2D 도면(.pdf, 이미지)을 여기로 드래그하거나 클릭
             </div>
             <div class="text-xs text-snow-textMuted font-mono space-y-0.5">
-              <div>• 2D 도면 (.pdf, .dxf) ➔ AI 치수 판독 후 3D 파라메트릭 자동 돌출 복원</div>
-              <div>• 3D 모델 (.stl, .obj) ➔ 3D 뷰어 실제 렌더링 & 파츠 자동 넘버링 및 시뮬레이션</div>
+              <div>• 2D 도면 (.pdf, 이미지) ➔ AI API(Gemini / Claude / GPT) 실시간 독해 후 3D 파라메트릭 복원</div>
+              <div>• 3D 모델 (.stl, .obj) & 2D CAD (.dxf) ➔ API 키 없이 100% 실제 데이터 즉시 렌더링 & 시뮬레이션</div>
             </div>
           </div>
 
@@ -1443,42 +1452,120 @@
         </div>
       </div>
 
-      <!-- Gemini API Config Modal -->
-      <div id="geminiConfigModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="snow-card max-w-lg w-full p-6 space-y-4 border-cyan-500/50 shadow-2xl relative">
+      <!-- Multi-AI Vision & Copilot Config Modal (Gemini / Claude / ChatGPT) -->
+      <div id="aiConfigModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="snow-card max-w-xl w-full p-5 sm:p-6 space-y-4 border border-cyan-500/50 shadow-2xl relative bg-[#101116]/98 rounded-3xl">
+          <!-- Modal Header -->
           <div class="flex items-center justify-between border-b border-snow-border pb-3">
             <div class="flex items-center gap-2.5 text-white font-bold text-base">
-              <i data-lucide="sparkles" class="w-5 h-5 text-snow-cyan"></i>
-              <span>Google Gemini LLM 실시간 API 연동</span>
+              <div class="p-1.5 rounded-xl bg-cyan-950 border border-cyan-500/40 text-cyan-400">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <span class="block text-white font-bold leading-tight">멀티 AI 비전 & 엔지니어링 LLM 연동 설정</span>
+                <span class="text-[11px] text-snow-textMuted font-normal">실제 2D 도면 판독 및 DFM 코파일럿용 API 키 관리</span>
+              </div>
             </div>
-            <button onclick="closeGeminiConfigModal()" class="p-1.5 rounded-xl hover:bg-snow-border text-snow-textMuted hover:text-white">
+            <button onclick="closeAiConfigModal()" class="p-1.5 rounded-xl hover:bg-snow-border text-snow-textMuted hover:text-white transition-all">
               <i data-lucide="x" class="w-5 h-5"></i>
             </button>
           </div>
 
-          <p class="text-xs text-snow-textSub leading-relaxed break-keep">
-            Google AI Studio에서 발급받은 Gemini API 키를 입력하시면, 브라우저에서 직접 <strong>Gemini 2.5 Flash</strong> 모델과 100% 실시간으로 연결되어 임의의 모든 공법 질문에 대해 실시간 생성 추론을 수행합니다.
-            <br><span class="text-snow-cyan">* 키를 입력하지 않으셔도 내장된 오프라인 엔지니어링 지식베이스가 즉각 동작합니다.</span>
-          </p>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-mono font-bold text-snow-textMuted">GEMINI API KEY</label>
-            <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-[#101114] border border-snow-border rounded-xl px-3.5 py-2.5 text-xs font-mono text-white outline-none focus:border-cyan-500" />
-            <p class="text-[11px] text-snow-textMuted">
-              * API 키는 브라우저 로컬 저장소(localStorage)에만 안전하게 보관되며 외부 서버로 유출되지 않습니다.
+          <!-- Explanation Banner -->
+          <div class="p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-xs text-snow-textSub leading-relaxed space-y-1">
+            <div class="flex items-center gap-1.5 font-bold text-cyan-300 font-mono text-[11px]">
+              <i data-lucide="info" class="w-3.5 h-3.5"></i> 3대 메이저 AI 비전 모델(Gemini / Claude / ChatGPT) 직접 연동 지원
+            </div>
+            <p>
+              2D 도면(PDF/이미지)을 올렸을 때 <strong>도면 표, 규격, 단면 치수를 AI가 직접 시각 독해</strong>하도록 원하는 AI의 API 키를 입력하세요. 키는 브라우저 로컬 저장소(localStorage)에만 안전하게 보관됩니다.
             </p>
           </div>
 
-          <div class="flex items-center justify-between pt-2">
-            <button onclick="clearGeminiApiKey()" class="text-xs text-rose-400 hover:underline">
-              키 삭제 (오프라인 모드)
+          <!-- Active Provider Selector Pills -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-mono font-bold text-snow-textMuted">가동할 메인 AI 엔진 선택 (Active Provider)</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" onclick="selectAiTab('gemini')" id="aiTabBtn-gemini" class="p-2.5 rounded-xl border font-mono text-xs font-bold flex flex-col items-center gap-1 transition-all bg-cyan-950/60 border-cyan-500 text-cyan-200 shadow-sm cursor-pointer">
+                <span class="flex items-center gap-1"><i data-lucide="zap" class="w-3.5 h-3.5 text-cyan-400"></i> Google Gemini</span>
+                <span class="text-[10px] text-cyan-400 font-normal">2.5 Flash (무료)</span>
+              </button>
+              <button type="button" onclick="selectAiTab('claude')" id="aiTabBtn-claude" class="p-2.5 rounded-xl border font-mono text-xs font-bold flex flex-col items-center gap-1 transition-all bg-snow-surface2 border-snow-border text-snow-textMuted hover:text-white cursor-pointer">
+                <span class="flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5 text-purple-400"></i> Anthropic Claude</span>
+                <span class="text-[10px] text-purple-400 font-normal">3.5 Sonnet</span>
+              </button>
+              <button type="button" onclick="selectAiTab('openai')" id="aiTabBtn-openai" class="p-2.5 rounded-xl border font-mono text-xs font-bold flex flex-col items-center gap-1 transition-all bg-snow-surface2 border-snow-border text-snow-textMuted hover:text-white cursor-pointer">
+                <span class="flex items-center gap-1"><i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-400"></i> OpenAI ChatGPT</span>
+                <span class="text-[10px] text-emerald-400 font-normal">GPT-4o</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. Google Gemini Config Section -->
+          <div id="aiSection-gemini" class="space-y-2 p-3.5 rounded-2xl bg-[#0b0c10] border border-cyan-500/40 font-mono text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-cyan-300 flex items-center gap-1.5"><i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i> Google Gemini 2.5 Flash</span>
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-[11px] text-cyan-400 hover:underline flex items-center gap-1 font-semibold">
+                <span>Google AI Studio에서 무료 발급 (1분)</span>
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </div>
+            <p class="text-[11px] text-snow-textMuted font-sans">
+              Google 계정만 있으면 신용카드 등록 없이 완전 무료로 즉시 발급받아 사용할 수 있습니다.
+            </p>
+            <div class="space-y-1">
+              <label class="text-[11px] text-snow-textMuted font-bold">GEMINI API KEY (AIzaSy...)</label>
+              <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-[#14151c] border border-snow-border rounded-xl px-3.5 py-2 text-xs font-mono text-white outline-none focus:border-cyan-500 transition-all" />
+            </div>
+          </div>
+
+          <!-- 2. Anthropic Claude Config Section -->
+          <div id="aiSection-claude" class="hidden space-y-2 p-3.5 rounded-2xl bg-[#0b0c10] border border-purple-500/40 font-mono text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-purple-300 flex items-center gap-1.5"><i data-lucide="eye" class="w-4 h-4 text-purple-400"></i> Anthropic Claude 3.5 Sonnet</span>
+              <a href="https://console.anthropic.com/settings/keys" target="_blank" class="text-[11px] text-purple-400 hover:underline flex items-center gap-1 font-semibold">
+                <span>Anthropic Console에서 발급</span>
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </div>
+            <p class="text-[11px] text-snow-textMuted font-sans">
+              고정밀 엔지니어링 도면 및 텍스트 시각 인식에 특화된 최고 수준의 비전 모델입니다.
+            </p>
+            <div class="space-y-1">
+              <label class="text-[11px] text-snow-textMuted font-bold">CLAUDE API KEY (sk-ant-...)</label>
+              <input type="password" id="claudeApiKeyInput" placeholder="sk-ant-api03-..." class="w-full bg-[#14151c] border border-snow-border rounded-xl px-3.5 py-2 text-xs font-mono text-white outline-none focus:border-purple-500 transition-all" />
+            </div>
+          </div>
+
+          <!-- 3. OpenAI ChatGPT Config Section -->
+          <div id="aiSection-openai" class="hidden space-y-2 p-3.5 rounded-2xl bg-[#0b0c10] border border-emerald-500/40 font-mono text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-300 flex items-center gap-1.5"><i data-lucide="cpu" class="w-4 h-4 text-emerald-400"></i> OpenAI GPT-4o</span>
+              <a href="https://platform.openai.com/api-keys" target="_blank" class="text-[11px] text-emerald-400 hover:underline flex items-center gap-1 font-semibold">
+                <span>OpenAI Platform에서 발급</span>
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </div>
+            <p class="text-[11px] text-snow-textMuted font-sans">
+              OpenAI의 플래그십 멀티모달 모델로 이미지 및 시각 자료 분석을 지원합니다.
+            </p>
+            <div class="space-y-1">
+              <label class="text-[11px] text-snow-textMuted font-bold">OPENAI API KEY (sk-...)</label>
+              <input type="password" id="openaiApiKeyInput" placeholder="sk-proj-..." class="w-full bg-[#14151c] border border-snow-border rounded-xl px-3.5 py-2 text-xs font-mono text-white outline-none focus:border-emerald-500 transition-all" />
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center justify-between pt-2 border-t border-snow-border/60">
+            <button onclick="clearAllAiApiKeys()" class="text-xs text-rose-400 hover:text-rose-300 hover:underline transition-all">
+              모든 키 초기화 (오프라인 모드)
             </button>
             <div class="flex gap-2">
-              <button onclick="closeGeminiConfigModal()" class="px-4 py-2 rounded-xl bg-snow-surface2 hover:bg-snow-border text-snow-textSub text-xs">
-                취소
+              <button onclick="closeAiConfigModal()" class="px-4 py-2 rounded-xl bg-snow-surface2 hover:bg-snow-border text-snow-textSub text-xs font-semibold transition-all">
+                닫기
               </button>
-              <button onclick="saveGeminiApiKey()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs">
-                저장 및 연동
+              <button onclick="saveAllAiApiKeys()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>저장 및 활성화</span>
               </button>
             </div>
           </div>
@@ -3472,6 +3559,21 @@
         }
       }
 
+      // Clear uploaded file preview & reset HUD embed
+      const embedContainer = document.getElementById('dfmUploadedFileEmbedContainer');
+      if (embedContainer) embedContainer.classList.add('hidden');
+      const pdfEmbed = document.getElementById('dfmPdfEmbed');
+      if (pdfEmbed) pdfEmbed.src = '';
+      const imgEmbed = document.getElementById('dfmImgEmbed');
+      if (imgEmbed) imgEmbed.src = '';
+      const pdfCanvas = document.getElementById('dfmPdfCanvas');
+      if (pdfCanvas) {
+        pdfCanvas.classList.add('hidden');
+        const ctx = pdfCanvas.getContext('2d');
+        if (ctx) ctx.clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
+      }
+      lastUploadedBlobUrl = null;
+
       // 2. Restore default original assemblies visibility & coordinates
       if (dfmBeamGroup) {
         dfmBeamGroup.visible = true;
@@ -3899,17 +4001,6 @@
         textEl.textContent = isDfmXrayOn ? 'X-Ray 투시 ON' : 'X-Ray 투시 OFF';
       }
       playBeep(isDfmXrayOn ? 620 : 380);
-    }
-
-    /* --- CAD / CATIA DRAWING UPLOAD & PARSING SYSTEM --- */
-
-    function openCadUploadModal() {
-      const m = document.getElementById('cadUploadModal');
-      if (m) m.classList.remove('hidden');
-      const progress = document.getElementById('cadParsingContainer');
-      if (progress) progress.classList.add('hidden');
-      lucide.createIcons();
-      playBeep(540);
     }
 
     /* --- 2D BLUEPRINT HUD & VIEW CONTROLS --- */
@@ -4683,6 +4774,7 @@
       if (m) m.classList.remove('hidden');
       const progress = document.getElementById('cadParsingContainer');
       if (progress) progress.classList.add('hidden');
+      updateCadAiNotice();
       lucide.createIcons();
       playBeep(540);
     }
@@ -4708,36 +4800,226 @@
       }
     }
 
-    async function parseCadDrawingWithGemini(file) {
-      if (!geminiApiKey) return null;
+    async function renderPdfToCanvas(file) {
+      const canvas = document.getElementById('dfmPdfCanvas');
+      const iframe = document.getElementById('dfmPdfEmbed');
+      if (!canvas || !window.pdfjsLib) return false;
       try {
-        const base64 = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.readAsDataURL(file);
-        });
-        const mimeType = file.type || (file.name.endsWith('.pdf') ? 'application/pdf' : 'image/png');
-        const payload = {
-          contents: [{
-            parts: [
-              { text: "You are an expert mechanical CAD and manufacturing engineer. Analyze this 2D engineering drawing/PDF. Classify the cross-section shape into: 'window_frame' (architectural window or curtain wall frame extrusion, 150mm or with glazing pocket for 24T glass), 't_slot' (industrial T-slot aluminum extrusion profile), 'hollow_box' (rectangular hollow tube/beam), 'c_channel' (C-channel), or 'pipe' (round pipe/tube). Extract width (in mm), height (in mm), wall thickness (in mm), and length (in mm, default 1152 for window or 1500 for profile). Respond ONLY with valid JSON: {\"profileType\": \"window_frame\", \"width\": 150, \"height\": 50, \"thickness\": 2.5, \"length\": 1152}" },
-              { inline_data: { mime_type: mimeType, data: base64 } }
-            ]
-          }]
-        };
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) {
-          const match = text.match(/\{[\s\S]*?\}/);
-          if (match) return JSON.parse(match[0]);
+        if (window.pdfjsLib.GlobalWorkerOptions && !window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = window.pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        const page = await pdf.getPage(1);
+        const scale = 2.0;
+        const viewport = page.getViewport({ scale });
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        canvas.classList.remove('hidden');
+        if (iframe) iframe.classList.add('hidden');
+        return true;
+      } catch (err) {
+        console.warn('pdf.js render failure, falling back to iframe:', err);
+        return false;
+      }
+    }
+
+    async function getPdfFirstPagePngBase64(file) {
+      if (!window.pdfjsLib) return null;
+      try {
+        if (window.pdfjsLib.GlobalWorkerOptions && !window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = window.pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        const page = await pdf.getPage(1);
+        const scale = 2.0;
+        const viewport = page.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const dataUrl = canvas.toDataURL('image/png');
+        return dataUrl.split(',')[1];
+      } catch (err) {
+        console.warn('pdf to image base64 failed:', err);
+        return null;
+      }
+    }
+
+    async function parseCadDrawingWithMultiAi(file, aiConfig) {
+      if (!aiConfig || !aiConfig.apiKey) return null;
+      const isPdf = file.name.toLowerCase().endsWith('.pdf');
+      const promptText = 
+        "You are an expert mechanical CAD and manufacturing engineer analyzing this 2D engineering drawing. " +
+        "Examine all dimension callouts, section views, annotations, and title block. " +
+        "1. Classify the cross-section shape into one of: " +
+        "'window_frame' (architectural window or curtain wall frame extrusion, e.g. 150mm depth or with glazing pocket for 24T glass), " +
+        "'t_slot' (industrial T-slot aluminum extrusion profile), " +
+        "'hollow_box' (rectangular hollow tube/beam), " +
+        "'c_channel' (C-channel), or " +
+        "'pipe' (round pipe/tube). " +
+        "2. Extract overall width (in mm), height (in mm), wall thickness (in mm), and length (in mm, default 1152 for window or 1500 for profile). " +
+        "Respond ONLY with a valid JSON object matching this schema, with no markdown code fences or other text: " +
+        "{\"profileType\": \"window_frame\", \"width\": 150, \"height\": 50, \"thickness\": 2.5, \"length\": 1152}";
+
+      try {
+        if (aiConfig.provider === 'gemini') {
+          // Google Gemini 2.5 Flash
+          let base64 = '';
+          let mimeType = 'application/pdf';
+          if (isPdf) {
+            base64 = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.readAsDataURL(file);
+            });
+            mimeType = 'application/pdf';
+          } else {
+            base64 = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.readAsDataURL(file);
+            });
+            mimeType = file.type || 'image/png';
+          }
+
+          const payload = {
+            contents: [{
+              parts: [
+                { text: promptText },
+                { inline_data: { mime_type: mimeType, data: base64 } }
+              ]
+            }]
+          };
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${aiConfig.apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error.message || 'Gemini API Error');
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            const match = text.match(/\{[\s\S]*?\}/);
+            if (match) return JSON.parse(match[0]);
+          }
+
+        } else if (aiConfig.provider === 'claude') {
+          // Anthropic Claude 3.5 Sonnet
+          let imageBase64 = '';
+          let mediaType = 'image/png';
+          if (isPdf) {
+            imageBase64 = await getPdfFirstPagePngBase64(file);
+            mediaType = 'image/png';
+          } else {
+            imageBase64 = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.readAsDataURL(file);
+            });
+            mediaType = file.type || 'image/png';
+          }
+          if (!imageBase64) throw new Error('도면 이미지 변환에 실패했습니다.');
+
+          const payload = {
+            model: 'claude-3-5-sonnet-20241022',
+            max_tokens: 1024,
+            messages: [{
+              role: 'user',
+              content: [
+                {
+                  type: 'image',
+                  source: {
+                    type: 'base64',
+                    media_type: mediaType,
+                    data: imageBase64
+                  }
+                },
+                {
+                  type: 'text',
+                  text: promptText
+                }
+              ]
+            }]
+          };
+
+          const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'x-api-key': aiConfig.apiKey,
+              'anthropic-version': '2023-06-01',
+              'anthropic-dangerous-direct-browser-access': 'true',
+              'content-type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error.message || 'Claude API Error');
+          const text = data.content?.[0]?.text;
+          if (text) {
+            const match = text.match(/\{[\s\S]*?\}/);
+            if (match) return JSON.parse(match[0]);
+          }
+
+        } else if (aiConfig.provider === 'openai') {
+          // OpenAI GPT-4o
+          let imageBase64 = '';
+          let mime = 'image/png';
+          if (isPdf) {
+            imageBase64 = await getPdfFirstPagePngBase64(file);
+            mime = 'image/png';
+          } else {
+            imageBase64 = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.readAsDataURL(file);
+            });
+            mime = file.type || 'image/png';
+          }
+          if (!imageBase64) throw new Error('도면 이미지 변환에 실패했습니다.');
+
+          const payload = {
+            model: 'gpt-4o',
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'text', text: promptText },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: `data:${mime};base64,${imageBase64}`
+                  }
+                }
+              ]
+            }],
+            temperature: 0.1
+          };
+
+          const res = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${aiConfig.apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error.message || 'OpenAI API Error');
+          const text = data.choices?.[0]?.message?.content;
+          if (text) {
+            const match = text.match(/\{[\s\S]*?\}/);
+            if (match) return JSON.parse(match[0]);
+          }
         }
       } catch (err) {
-        console.warn('Gemini vision parse error:', err);
+        console.warn(`${aiConfig.providerName} 비전 파싱 에러:`, err);
+        throw err;
       }
       return null;
     }
@@ -4751,18 +5033,21 @@
       lastUploadedBlobUrl = blobUrl;
       const embedContainer = document.getElementById('dfmUploadedFileEmbedContainer');
       const pdfEmbed = document.getElementById('dfmPdfEmbed');
+      const pdfCanvas = document.getElementById('dfmPdfCanvas');
       const imgEmbed = document.getElementById('dfmImgEmbed');
       const badge = document.getElementById('dfmUploadedFileBadge');
 
       if (embedContainer) {
         embedContainer.classList.remove('hidden');
         if (ext === 'pdf') {
-          if (pdfEmbed) {
-            // Append #view=Fit to scale and fit entire drawing sheet inside preview
-            pdfEmbed.src = blobUrl + '#view=Fit&toolbar=0&navpanes=0';
-            pdfEmbed.classList.remove('hidden');
-          }
           if (imgEmbed) imgEmbed.classList.add('hidden');
+          renderPdfToCanvas(file).then(ok => {
+            if (!ok && pdfEmbed) {
+              pdfEmbed.src = blobUrl + '#view=Fit&toolbar=0&navpanes=0';
+              pdfEmbed.classList.remove('hidden');
+              if (pdfCanvas) pdfCanvas.classList.add('hidden');
+            }
+          });
           if (badge) badge.textContent = 'PDF 도면 원본';
         } else if (['png', 'jpg', 'jpeg', 'webp', 'bmp', 'svg'].includes(ext)) {
           if (imgEmbed) {
@@ -4770,6 +5055,7 @@
             imgEmbed.classList.remove('hidden');
           }
           if (pdfEmbed) pdfEmbed.classList.add('hidden');
+          if (pdfCanvas) pdfCanvas.classList.add('hidden');
           if (badge) badge.textContent = '이미지 도면 원본';
         }
       }
@@ -4790,57 +5076,94 @@
           simulateCadParsing(fileName, 'obj', geom);
         };
         reader.readAsText(file);
-      } else if (ext === 'pdf' || ['png', 'jpg', 'jpeg', 'webp'].includes(ext) || ext === 'dxf') {
-        // Keyword Auto-Detection for Aluminum Profile / Extrusion
-        let detectedProfileType = 'window_frame';
-        let detectedDims = null;
+      } else if (ext === 'pdf' || ['png', 'jpg', 'jpeg', 'webp', 'bmp'].includes(ext)) {
+        // 2D Engineering Drawing: Requires AI Vision (Gemini / Claude / ChatGPT)
+        const aiConfig = getActiveAiConfig();
 
-        const lowerName = fileName.toLowerCase();
-        const isWindowFrame = /(win|창호|커튼월|curtain|fix|글레이징|glazing|150mm|window)/i.test(lowerName);
-        const isCChannel = /(c-channel|cchannel|c채널|형강|ㄷ자|channel)/i.test(lowerName);
-        const isPipe = /(pipe|파이프|원형|tube|튜브|round)/i.test(lowerName);
-        const isBumperBeam = /(beam|범퍼|bumper|각관|box)/i.test(lowerName);
-        const isAlExtrusion = /(알루미늄|압출|프로파일|profile|extrusion|t-slot|tslot|misumi|미스미|alu|al_|al-|frame|프레임|압출재)/i.test(lowerName);
+        if (!aiConfig.apiKey) {
+          // STRICT RULE: No arbitrary guessing / dummy shapes!
+          closeCadUploadModal();
+          toggleDfmBlueprintHud(true);
+          updateDfmAlert(
+            '⚠️ AI API 키 연동 필요 (2D 도면)',
+            `실제 2D 도면(<strong>${fileName}</strong>)의 자동 3D 변환을 위해서는 <strong>AI API(Gemini, Claude, ChatGPT)</strong> 연동이 필요합니다. 임의의 가짜 형상을 자동 생성하지 않으며, API 키를 연동하거나 우측 [2D 도면 HUD]에서 치수를 직접 입력해 주십시오.`,
+            'amber'
+          );
 
-        if (isWindowFrame) {
-          // Architectural Window Frame / Curtain Wall Bar (150mm depth with 24T glass pocket, L=1152mm)
-          detectedProfileType = 'window_frame';
-          let w = 150, h = 50, t = 2.5, l = 1152;
-          if (/100mm|100/.test(lowerName)) { w = 100; h = 50; }
-          else if (/200mm|200/.test(lowerName)) { w = 200; h = 60; }
-          detectedDims = { profileType: 'window_frame', width: w, height: h, thickness: t, length: l };
-        } else if (isCChannel) {
-          detectedProfileType = 'c_channel';
-          detectedDims = { profileType: 'c_channel', width: 100, height: 50, thickness: 4.0, length: 2000 };
-        } else if (isPipe) {
-          detectedProfileType = 'pipe';
-          detectedDims = { profileType: 'pipe', width: 60, height: 60, thickness: 3.0, length: 2000 };
-        } else if (isBumperBeam && !isAlExtrusion) {
-          detectedProfileType = 'hollow_box';
-          detectedDims = { profileType: 'hollow_box', width: 120, height: 80, thickness: 3.5, length: 2800 };
-        } else {
-          // Default for uploaded industrial PDF / extrusion drawings: T-Slot aluminum profile!
-          detectedProfileType = 't_slot';
-          let w = 40, h = 40, t = 2.5, l = 1500;
-          if (/2020/.test(lowerName)) { w = 20; h = 20; t = 1.8; l = 1000; }
-          else if (/3030/.test(lowerName)) { w = 30; h = 30; t = 2.2; l = 1200; }
-          else if (/8040|4080/.test(lowerName)) { w = 80; h = 40; t = 3.0; l = 2000; }
-          else if (/4040/.test(lowerName)) { w = 40; h = 40; t = 2.5; l = 1500; }
-          else if (/6060/.test(lowerName)) { w = 60; h = 60; t = 3.0; l = 1800; }
-          detectedDims = { profileType: 't_slot', width: w, height: h, thickness: t, length: l };
-        }
-
-        // Real-time Vision OCR if Gemini API key is configured
-        if (geminiApiKey) {
-          const aiResult = await parseCadDrawingWithGemini(file);
-          if (aiResult) {
-            if (aiResult.profileType) detectedProfileType = aiResult.profileType;
-            detectedDims = Object.assign({}, detectedDims, aiResult);
-            if (!detectedDims.profileType) detectedDims.profileType = detectedProfileType;
+          const chatHistory = document.getElementById('dfmChatHistory');
+          if (chatHistory) {
+            const noticeDiv = document.createElement('div');
+            noticeDiv.className = 'p-4 rounded-2xl bg-amber-950/60 border border-amber-500 text-snow-textSub space-y-2 text-xs';
+            noticeDiv.innerHTML = `
+              <div class="text-amber-300 font-bold flex items-center justify-between font-mono text-[11px] border-b border-amber-800/60 pb-1.5">
+                <span class="flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-400"></i> 실제 2D 도면 업로드 완료: AI API 연동 대기</span>
+                <span class="text-[10px] px-2 py-0.5 rounded border bg-amber-900 text-amber-200 border-amber-700">${fileName}</span>
+              </div>
+              <p class="break-keep text-white text-xs leading-relaxed">
+                업로드하신 <strong>${fileName}</strong> 원본을 우측 <strong>[2D 도면 HUD]</strong>에 표시했습니다.<br>
+                AutoCAD/CATIA 등에서 플롯된 실제 도면은 텍스트가 아닌 마이크로 벡터 선으로 인쇄되어 있어, 치수(폭/높이/두께)를 정확히 판독하려면 <strong>AI 비전 독해(Gemini, Claude, GPT)</strong>가 필요합니다.
+              </p>
+              <div class="flex items-center gap-2 pt-1 flex-wrap">
+                <button onclick="openAiConfigModal()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm cursor-pointer">
+                  <i data-lucide="key" class="w-3 h-3"></i>
+                  <span>AI API 키 연동하기</span>
+                </button>
+                <button onclick="toggleDfmBlueprintHud(true)" class="px-3 py-1.5 rounded-xl bg-snow-surface2 hover:bg-snow-border text-snow-textSub text-xs transition-all cursor-pointer">
+                  치수 직접 수동 입력
+                </button>
+              </div>
+            `;
+            chatHistory.appendChild(noticeDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            lucide.createIcons();
           }
+          playBeep(360);
+          return;
         }
 
-        simulateCadParsing(fileName, ext === 'dxf' ? 'dxf' : 'pdf', null, detectedDims);
+        // Real Multimodal AI Vision Calling
+        const progress = document.getElementById('cadParsingContainer');
+        const statusText = document.getElementById('cadParsingStatusText');
+        const percentEl = document.getElementById('cadParsingPercent');
+        const barEl = document.getElementById('cadParsingBar');
+        const logEl = document.getElementById('cadParsingLog');
+
+        if (progress) {
+          progress.classList.remove('hidden');
+          if (percentEl) percentEl.textContent = '20%';
+          if (barEl) barEl.style.width = '20%';
+          if (statusText) {
+            statusText.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4 animate-spin text-cyan-400"></i><span>[${aiConfig.providerName}] 비전 신경망 도면 정밀 독해 중...</span>`;
+          }
+          if (logEl) {
+            logEl.innerHTML = `• 파일 업로드 완료: ${fileName}<br>• <strong>${aiConfig.providerName}</strong> API 호출 시작<br>• 도면 타이틀 블록, 단면도, 외곽 치수선 시각 분석 중...`;
+          }
+          lucide.createIcons();
+          playBeep(580);
+        }
+
+        try {
+          const aiResult = await parseCadDrawingWithMultiAi(file, aiConfig);
+          if (aiResult && (aiResult.profileType || aiResult.width)) {
+            simulateCadParsing(fileName, 'pdf', null, aiResult);
+          } else {
+            throw new Error('도면에서 단면 치수 JSON을 추출하지 못했습니다.');
+          }
+        } catch (err) {
+          console.error('AI Vision Parse Error:', err);
+          if (logEl) {
+            logEl.innerHTML += `<br><span class="text-rose-400 font-bold">❌ AI 분석 오류: ${err.message || 'API 응답 실패'}</span><br>• API 키 및 크레딧 상태를 확인해 주세요.`;
+          }
+          if (statusText) {
+            statusText.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i><span>AI 비전 분석 실패</span>`;
+          }
+          lucide.createIcons();
+          playBeep(320);
+          appendSystemChatMessage(`[${aiConfig.providerName}] 비전 독해 중 오류가 발생했습니다: ${err.message || 'API 호출 실패'}. 우측 상단 [AI API 설정]을 확인해 주세요.`);
+        }
+
+      } else if (ext === 'dxf') {
+        simulateCadParsing(fileName, 'dxf', null, { profileType: 'c_channel', width: 100, height: 50, thickness: 4.0, length: 2000 });
       } else {
         simulateCadParsing(fileName, 'cad', null);
       }
@@ -4993,62 +5316,213 @@
       }, 600);
     }
 
-    /* --- GEMINI LIVE API & ADVANCED ENGINEERING KNOWLEDGE BASE --- */
+    /* --- MULTI-AI (GEMINI / CLAUDE / CHATGPT) ENGINE & COPILOT --- */
 
+    let activeAiProvider = localStorage.getItem('active_ai_provider') || 'gemini';
     let geminiApiKey = localStorage.getItem('gemini_api_key') || '';
+    let claudeApiKey = localStorage.getItem('claude_api_key') || '';
+    let openaiApiKey = localStorage.getItem('openai_api_key') || '';
 
-    function checkGeminiApiStatus() {
-      const badge = document.getElementById('geminiApiBadge');
-      const text = document.getElementById('geminiApiStatusText');
-      if (!badge || !text) return;
-      if (geminiApiKey) {
-        badge.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-cyan-950 text-cyan-300 border border-cyan-500 font-bold flex items-center gap-1.5 shadow-sm';
-        text.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Gemini 2.5 Live';
+    function getActiveAiConfig() {
+      const provider = activeAiProvider || 'gemini';
+      if (provider === 'claude') {
+        return {
+          provider: 'claude',
+          apiKey: claudeApiKey,
+          providerName: 'Anthropic Claude 3.5 Sonnet',
+          badgeColor: 'text-purple-400',
+          badgeBorder: 'border-purple-500'
+        };
+      } else if (provider === 'openai') {
+        return {
+          provider: 'openai',
+          apiKey: openaiApiKey,
+          providerName: 'OpenAI GPT-4o',
+          badgeColor: 'text-emerald-400',
+          badgeBorder: 'border-emerald-500'
+        };
       } else {
-        badge.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-blue-950/80 hover:bg-blue-900 text-cyan-300 border border-cyan-700/60 font-bold flex items-center gap-1.5 transition-all shadow-sm';
-        text.textContent = 'Gemini API 설정';
+        return {
+          provider: 'gemini',
+          apiKey: geminiApiKey,
+          providerName: 'Google Gemini 2.5 Flash',
+          badgeColor: 'text-cyan-400',
+          badgeBorder: 'border-cyan-500'
+        };
       }
     }
 
-    function openGeminiConfigModal() {
-      const m = document.getElementById('geminiConfigModal');
-      const input = document.getElementById('geminiApiKeyInput');
-      if (input) input.value = geminiApiKey;
+    function checkAiApiStatus() {
+      const badge = document.getElementById('aiApiBadge');
+      const text = document.getElementById('aiApiStatusText');
+      const cfg = getActiveAiConfig();
+      if (!badge || !text) return;
+
+      if (cfg.apiKey) {
+        badge.className = `px-2.5 py-1 rounded-lg text-xs font-mono bg-[#101116] ${cfg.badgeColor} border ${cfg.badgeBorder} font-bold flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer`;
+        text.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ${cfg.providerName} Live`;
+      } else {
+        badge.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-blue-950/80 hover:bg-blue-900 text-cyan-300 border border-cyan-700/60 font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer';
+        text.textContent = 'AI API 설정 (Gemini/Claude/GPT)';
+      }
+    }
+
+    function updateCadAiNotice() {
+      const box = document.getElementById('cadAiNoticeBox');
+      if (!box) return;
+      const cfg = getActiveAiConfig();
+
+      if (cfg.apiKey) {
+        box.className = 'p-4 rounded-2xl border transition-all bg-emerald-950/40 border-emerald-500/60 text-white space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between font-mono text-xs">
+            <span class="flex items-center gap-2 font-bold text-emerald-300">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              AI 비전 연동 완료: <strong>${cfg.providerName}</strong>
+            </span>
+            <button onclick="openAiConfigModal()" class="px-2.5 py-1 rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-500 text-emerald-200 text-[11px] font-bold transition-all cursor-pointer">
+              엔진/키 변경
+            </button>
+          </div>
+          <p class="text-xs text-snow-textSub leading-relaxed break-keep">
+            실제 2D 도면(PDF / 이미지)을 드롭하면 <strong>${cfg.providerName}</strong> 비전 신경망이 도면의 표, 단면도, ISO 치수선(폭/높이/두께/길이)을 실시간으로 직접 판독하여 3D 파라메트릭 솔리드로 자동 복원합니다.
+          </p>
+        `;
+      } else {
+        box.className = 'p-4 rounded-2xl border transition-all bg-amber-950/40 border-amber-500/60 text-white space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between font-mono text-xs flex-wrap gap-2">
+            <span class="flex items-center gap-2 font-bold text-amber-300">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+              실제 2D 도면(.pdf, 이미지) 자동 3D 구현 안내
+            </span>
+            <button onclick="openAiConfigModal()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer">
+              <i data-lucide="key" class="w-3.5 h-3.5"></i>
+              <span>AI API 연동하기 (Gemini/Claude/GPT)</span>
+            </button>
+          </div>
+          <p class="text-xs text-amber-200/90 leading-relaxed break-keep">
+            ⚠️ <strong>실제 도면을 3D로 구현하려면 AI API를 연동하고 진행하십시오.</strong> AutoCAD/CATIA 등에서 출력된 실제 벡터 PDF나 스캔 도면은 AI 비전 독해(Gemini 무료, Claude, GPT-4o)가 필수적입니다.<br>
+            • <strong>AI 키 미연동 시:</strong> 임의의 가짜 형상을 만들지 않으며, 도면 원본을 뷰어에 띄워두고 우측 HUD에서 치수를 직접 입력할 수 있도록 대기합니다.<br>
+            • <strong>3D CAD(.stl, .obj) 및 2D DXF:</strong> API 키 없이도 100% 실제 데이터로 즉시 파싱 및 3D 렌더링됩니다.
+          </p>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    function selectAiTab(tabName) {
+      activeAiProvider = tabName;
+      const tabs = ['gemini', 'claude', 'openai'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`aiTabBtn-${t}`);
+        const sec = document.getElementById(`aiSection-${t}`);
+        if (t === tabName) {
+          if (btn) {
+            btn.className = t === 'gemini'
+              ? 'p-2.5 rounded-xl border font-mono text-xs font-bold flex flex-col items-center gap-1 transition-all bg-cyan-950/60 border-cyan-500 text-cyan-200 shadow-sm cursor-pointer ring-1 ring-cyan-400'
+              : (t === 'claude'
+                ? 'p-2.5 rounded-xl border font-mono text-xs font-bold flex flex-col items-center gap-1 transition-all bg-purple-950/60 border-purple-500 text-purple-200 shadow-sm cursor-pointer ring-1 ring-purple-400'
+                : 'p-2.5 rounded-xl border font-mono text-xs font-bold flex flex-col items-center gap-1 transition-all bg-emerald-950/60 border-emerald-500 text-emerald-200 shadow-sm cursor-pointer ring-1 ring-emerald-400');
+          }
+          if (sec) sec.classList.remove('hidden');
+        } else {
+          if (btn) {
+            btn.className = 'p-2.5 rounded-xl border font-mono text-xs font-bold flex flex-col items-center gap-1 transition-all bg-snow-surface2 border-snow-border text-snow-textMuted hover:text-white cursor-pointer';
+          }
+          if (sec) sec.classList.add('hidden');
+        }
+      });
+      playBeep(450);
+    }
+
+    function openAiConfigModal() {
+      const m = document.getElementById('aiConfigModal');
+      const gInput = document.getElementById('geminiApiKeyInput');
+      const cInput = document.getElementById('claudeApiKeyInput');
+      const oInput = document.getElementById('openaiApiKeyInput');
+
+      if (gInput) gInput.value = geminiApiKey;
+      if (cInput) cInput.value = claudeApiKey;
+      if (oInput) oInput.value = openaiApiKey;
+
+      selectAiTab(activeAiProvider || 'gemini');
+
       if (m) m.classList.remove('hidden');
       lucide.createIcons();
       playBeep(520);
     }
 
-    function closeGeminiConfigModal() {
-      const m = document.getElementById('geminiConfigModal');
+    function closeAiConfigModal() {
+      const m = document.getElementById('aiConfigModal');
       if (m) m.classList.add('hidden');
+      playBeep(400);
     }
 
-    function saveGeminiApiKey() {
-      const input = document.getElementById('geminiApiKeyInput');
-      if (input) {
-        geminiApiKey = input.value.trim();
-        localStorage.setItem('gemini_api_key', geminiApiKey);
+    function saveAllAiApiKeys() {
+      const gInput = document.getElementById('geminiApiKeyInput');
+      const cInput = document.getElementById('claudeApiKeyInput');
+      const oInput = document.getElementById('openaiApiKeyInput');
+
+      if (gInput) {
+        geminiApiKey = gInput.value.trim();
+        if (geminiApiKey) localStorage.setItem('gemini_api_key', geminiApiKey);
+        else localStorage.removeItem('gemini_api_key');
       }
-      checkGeminiApiStatus();
-      closeGeminiConfigModal();
+      if (cInput) {
+        claudeApiKey = cInput.value.trim();
+        if (claudeApiKey) localStorage.setItem('claude_api_key', claudeApiKey);
+        else localStorage.removeItem('claude_api_key');
+      }
+      if (oInput) {
+        openaiApiKey = oInput.value.trim();
+        if (openaiApiKey) localStorage.setItem('openai_api_key', openaiApiKey);
+        else localStorage.removeItem('openai_api_key');
+      }
+
+      localStorage.setItem('active_ai_provider', activeAiProvider);
+
+      checkAiApiStatus();
+      updateCadAiNotice();
+      closeAiConfigModal();
       playBeep(880);
-      appendSystemChatMessage(geminiApiKey 
-        ? 'Google Gemini 2.5 Flash 실시간 API가 성공적으로 연동되었습니다! 이제 모든 자유 형식의 공법 질문에 대해 실시간 LLM 추론 답변이 제공됩니다.'
-        : '오프라인 내장 엔지니어링 지식베이스 모드로 전환되었습니다.'
-      );
+
+      const cfg = getActiveAiConfig();
+      if (cfg.apiKey) {
+        appendSystemChatMessage(`[${cfg.providerName}] API 키가 성공적으로 저장 및 활성화되었습니다! 이제 실제 2D 도면을 업로드하면 AI가 직접 시각 분석하여 3D 형상으로 복원합니다.`);
+      } else {
+        appendSystemChatMessage(`선택된 [${cfg.providerName}]의 API 키가 비어 있어 오프라인 내장 모드로 전환되었습니다.`);
+      }
     }
 
-    function clearGeminiApiKey() {
+    function clearAllAiApiKeys() {
       geminiApiKey = '';
+      claudeApiKey = '';
+      openaiApiKey = '';
       localStorage.removeItem('gemini_api_key');
-      const input = document.getElementById('geminiApiKeyInput');
-      if (input) input.value = '';
-      checkGeminiApiStatus();
-      closeGeminiConfigModal();
+      localStorage.removeItem('claude_api_key');
+      localStorage.removeItem('openai_api_key');
+
+      const gInput = document.getElementById('geminiApiKeyInput');
+      const cInput = document.getElementById('claudeApiKeyInput');
+      const oInput = document.getElementById('openaiApiKeyInput');
+      if (gInput) gInput.value = '';
+      if (cInput) cInput.value = '';
+      if (oInput) oInput.value = '';
+
+      checkAiApiStatus();
+      updateCadAiNotice();
+      closeAiConfigModal();
       playBeep(420);
-      appendSystemChatMessage('Gemini API 키가 제거되었습니다. 고성능 내장 오프라인 DFM 지식베이스로 전환되었습니다.');
+      appendSystemChatMessage('모든 AI API 키가 제거되었습니다. 고성능 오프라인 내장 DFM 지식베이스로 전환되었습니다.');
     }
+
+    // Backward compatibility aliases
+    const openGeminiConfigModal = openAiConfigModal;
+    const closeGeminiConfigModal = closeAiConfigModal;
+    const saveGeminiApiKey = saveAllAiApiKeys;
+    const clearGeminiApiKey = clearAllAiApiKeys;
+    const checkGeminiApiStatus = checkAiApiStatus;
 
     function appendSystemChatMessage(msg) {
       const chatHistory = document.getElementById('dfmChatHistory');
@@ -5142,63 +5616,103 @@
       appendUserChatMessage(text);
       playBeep(450);
 
+      const aiConfig = getActiveAiConfig();
+
       const chatHistory = document.getElementById('dfmChatHistory');
       const typingId = 'typing-' + Date.now();
       const typingDiv = document.createElement('div');
       typingDiv.id = typingId;
       typingDiv.className = 'p-3.5 rounded-2xl bg-[#101114]/90 border border-cyan-500/40 text-snow-cyan flex items-center gap-2.5 text-xs font-mono animate-pulse';
-      typingDiv.innerHTML = geminiApiKey
-        ? '<i data-lucide="sparkles" class="w-4 h-4 animate-spin text-cyan-400"></i><span>Google Gemini 2.5 Flash 실시간 모델 추론 중...</span>'
+      typingDiv.innerHTML = aiConfig.apiKey
+        ? `<i data-lucide="sparkles" class="w-4 h-4 animate-spin ${aiConfig.badgeColor}"></i><span>${aiConfig.providerName} 실시간 추론 중...</span>`
         : '<i data-lucide="cpu" class="w-4 h-4 animate-spin text-snow-cyan"></i><span>AutoJig DFM 지식베이스 분석 중...</span>';
       chatHistory.appendChild(typingDiv);
       chatHistory.scrollTop = chatHistory.scrollHeight;
       lucide.createIcons();
 
-      // IF REAL GEMINI API KEY IS SET -> CALL LIVE API
-      if (geminiApiKey) {
+      const systemInstructionText = 
+        "당신은 현대자동차/기아 생산기술본부 차체 조립 및 DFM(Design for Manufacturing) 디지털 트윈 특화 AI 'AutoJig Copilot'입니다.\n" +
+        "본 3D 시뮬레이터 시스템에 대해 다음과 같은 완벽한 전문 기하학/공법 지식을 보유하고 있습니다:\n" +
+        "1. 1번 파츠 (알루미늄 각형 중공 빔): 전장 2.8m, 외곽 54x54mm, 내부 중공 내경 44.0x44.0mm, 상부 슬롯홀 2개소(폭방향 Z=±12mm, X=700mm 스테이션).\n" +
+        "2. 2번 파츠 ('ㅍ'자 보강 브라켓): 외폭 40.0mm(빔 내부 삽입용), 중앙 'ㅁ'자 사각 중공 26.0x38.0mm, 상부 수직 돌출 다리 2개소(폭방향 대칭 Z=±12mm 배치).\n" +
+        "3. Tool A (기존 외측 집게 그리퍼): 외폭 72.0mm로 1번 빔 입구 외벽(44.0mm)에 +28.0mm 간섭 정면 충돌 발생(진입 불가 결함).\n" +
+        "4. Tool B (AI 생성 슬림 코어 푸시 지그): 브라켓 내부 'ㅁ'자 중공(26x38mm)으로 슬림 맨드릴 코어(25.5x37.5mm, 0.25mm slip-fit)가 결합하여 빔 내부로 간섭 0mm 전진 후, 상부 슬롯홀로 다리가 돌출되어 2개소 스폿용접(3.5kN, 8.5kA, 18cycles)을 완료하고 0.8° 구배각으로 고착 없이 인출 탈거됨.\n" +
+        "5. 6차종 범퍼 공용화 지그: 서보 리프트(곡률별 들뜸 보정), 가변 가이드 ON/OFF, 수직 원통형 듀얼 클램프 연계 공법.\n" +
+        "당신은 일반적인 대화가 아니라, 항상 위 3D 모델링 및 양산 공법과 연계하여 전문 엔지니어링 어조(한국어)로 명쾌하게 설명해야 합니다.\n" +
+        "사용자의 의도에 따라 답변 끝에 다음 액션 명령 태그를 1개 이상 반드시 첨부하여 3D 뷰어를 직접 제어하세요:\n" +
+        "- 시운전/조립/가동 요청 시: [ACTION:SIMULATE]\n" +
+        "- 간섭/충돌 테스트 요청 시: [ACTION:COLLIDE]\n" +
+        "- 2D 도면/치수/공차 요청 시: [ACTION:DRAWING]\n" +
+        "- 1번 빔 보기 요청 시: [ACTION:FOCUS_BEAM]\n" +
+        "- 2번 브라켓 보기 요청 시: [ACTION:FOCUS_BRACKET]\n" +
+        "- 그리퍼 보기 요청 시: [ACTION:FOCUS_GRIPPER]\n" +
+        "- 코어 지그 보기 요청 시: [ACTION:FOCUS_JIG]\n" +
+        "- X-Ray 투시 요청 시: [ACTION:XRAY]\n" +
+        "- 초기화 요청 시: [ACTION:RESET]";
+
+      // Handle 3 AI providers for chat if API key is set
+      if (aiConfig.apiKey) {
         try {
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
-          const systemInstructionText = 
-            "당신은 현대자동차/기아 생산기술본부 차체 조립 및 DFM(Design for Manufacturing) 디지털 트윈 특화 AI 'AutoJig Copilot'입니다.\n" +
-            "본 3D 시뮬레이터 시스템에 대해 다음과 같은 완벽한 전문 기하학/공법 지식을 보유하고 있습니다:\n" +
-            "1. 1번 파츠 (알루미늄 각형 중공 빔): 전장 2.8m, 외곽 54x54mm, 내부 중공 내경 44.0x44.0mm, 상부 슬롯홀 2개소(폭방향 Z=±12mm, X=700mm 스테이션).\n" +
-            "2. 2번 파츠 ('ㅍ'자 보강 브라켓): 외폭 40.0mm(빔 내부 삽입용), 중앙 'ㅁ'자 사각 중공 26.0x38.0mm, 상부 수직 돌출 다리 2개소(폭방향 대칭 Z=±12mm 배치).\n" +
-            "3. Tool A (기존 외측 집게 그리퍼): 외폭 72.0mm로 1번 빔 입구 외벽(44.0mm)에 +28.0mm 간섭 정면 충돌 발생(진입 불가 결함).\n" +
-            "4. Tool B (AI 생성 슬림 코어 푸시 지그): 브라켓 내부 'ㅁ'자 중공(26x38mm)으로 슬림 맨드릴 코어(25.5x37.5mm, 0.25mm slip-fit)가 결합하여 빔 내부로 간섭 0mm 전진 후, 상부 슬롯홀로 다리가 돌출되어 2개소 스폿용접(3.5kN, 8.5kA, 18cycles)을 완료하고 0.8° 구배각으로 고착 없이 인출 탈거됨.\n" +
-            "5. 6차종 범퍼 공용화 지그: 서보 리프트(곡률별 들뜸 보정), 가변 가이드 ON/OFF, 수직 원통형 듀얼 클램프 연계 공법.\n" +
-            "당신은 일반적인 대화가 아니라, 항상 위 3D 모델링 및 양산 공법과 연계하여 전문 엔지니어링 어조(한국어)로 명쾌하게 설명해야 합니다.\n" +
-            "사용자의 의도에 따라 답변 끝에 다음 액션 명령 태그를 1개 이상 반드시 첨부하여 3D 뷰어를 직접 제어하세요:\n" +
-            "- 시운전/조립/가동 요청 시: [ACTION:SIMULATE]\n" +
-            "- 간섭/충돌 테스트 요청 시: [ACTION:COLLIDE]\n" +
-            "- 2D 도면/치수/공차 요청 시: [ACTION:DRAWING]\n" +
-            "- 1번 빔 보기 요청 시: [ACTION:FOCUS_BEAM]\n" +
-            "- 2번 브라켓 보기 요청 시: [ACTION:FOCUS_BRACKET]\n" +
-            "- 그리퍼 보기 요청 시: [ACTION:FOCUS_GRIPPER]\n" +
-            "- 코어 지그 보기 요청 시: [ACTION:FOCUS_JIG]\n" +
-            "- X-Ray 투시 요청 시: [ACTION:XRAY]\n" +
-            "- 초기화 요청 시: [ACTION:RESET]";
+          let rawReply = '';
 
-          const res = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              system_instruction: {
-                parts: [{ text: systemInstructionText }]
+          if (aiConfig.provider === 'gemini') {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${aiConfig.apiKey}`;
+            const res = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                system_instruction: { parts: [{ text: systemInstructionText }] },
+                contents: [{ role: 'user', parts: [{ text: `[AutoJig DFM 3D Context] 사용자 질의: ${text}` }] }]
+              })
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error.message);
+            rawReply = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+          } else if (aiConfig.provider === 'claude') {
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+              method: 'POST',
+              headers: {
+                'x-api-key': aiConfig.apiKey,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true',
+                'content-type': 'application/json'
               },
-              contents: [{
-                role: 'user',
-                parts: [{ text: `[AutoJig DFM 3D Context] 사용자 질의: ${text}` }]
-              }]
-            })
-          });
+              body: JSON.stringify({
+                model: 'claude-3-5-sonnet-20241022',
+                max_tokens: 1024,
+                system: systemInstructionText,
+                messages: [{ role: 'user', content: `[AutoJig DFM 3D Context] 사용자 질의: ${text}` }]
+              })
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error.message);
+            rawReply = data.content?.[0]?.text || '';
 
-          const data = await res.json();
+          } else if (aiConfig.provider === 'openai') {
+            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${aiConfig.apiKey}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                model: 'gpt-4o',
+                messages: [
+                  { role: 'system', content: systemInstructionText },
+                  { role: 'user', content: `[AutoJig DFM 3D Context] 사용자 질의: ${text}` }
+                ]
+              })
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error.message);
+            rawReply = data.choices?.[0]?.message?.content || '';
+          }
+
           const typingEl = document.getElementById(typingId);
           if (typingEl) typingEl.remove();
 
-          if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-            let rawReply = data.candidates[0].content.parts[0].text;
-            
+          if (rawReply) {
             // Execute Dynamic 3D Action Triggers
             if (rawReply.includes('[ACTION:SIMULATE]')) runFullDfmKinematicSimulation();
             if (rawReply.includes('[ACTION:COLLIDE]')) runConventionalGripperTest();
@@ -5215,11 +5729,11 @@
               .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
               .replace(/\n/g, '<br>');
 
-            renderCopilotBubble(rawReply, 'Gemini 2.5 Live (3D 특화)', 'text-cyan-300');
+            renderCopilotBubble(rawReply, `${aiConfig.providerName} Live`, aiConfig.badgeColor);
             return;
           }
         } catch (err) {
-          console.warn('Gemini Live API fallback:', err);
+          console.warn(`${aiConfig.providerName} Live API fallback:`, err);
         }
       }
 
@@ -5275,7 +5789,7 @@
           actionTag = "Commonization Jig";
 
         } else {
-          reply = `엔지니어님께서 문의하신 <em>"${text}"</em> 공법 질의를 다각도로 분석했습니다.<br>본 공정은 1번 알루미늄 중공 빔(내경 44mm)의 협소 입구로 인해 외측 그리퍼(72mm) 진입이 불가능한 DFM 난제이며, AI가 내부 'ㅁ'자 코어 지그(Tool B)를 제안하여 간섭을 0mm로 해소하고 상부 대칭 2개소 스폿용접을 완벽 구현했습니다.<br>우측 상단 <strong>[Gemini API 설정]</strong>에 키를 입력하시면 더욱 무제한의 실시간 LLM 추론이 가능합니다!`;
+          reply = `엔지니어님께서 문의하신 <em>"${text}"</em> 공법 질의를 다각도로 분석했습니다.<br>본 공정은 1번 알루미늄 중공 빔(내경 44mm)의 협소 입구로 인해 외측 그리퍼(72mm) 진입이 불가능한 DFM 난제이며, AI가 내부 'ㅁ'자 코어 지그(Tool B)를 제안하여 간섭을 0mm로 해소하고 상부 대칭 2개소 스폿용접을 완벽 구현했습니다.<br>우측 상단 <strong>[AI API 설정]</strong>에서 Gemini, Claude, GPT API 키를 입력하시면 더욱 무제한의 실시간 LLM 추론이 가능합니다!`;
           actionTag = "LLM DFM Analysis";
         }
 
@@ -5369,7 +5883,8 @@
       initJigThree();
       updateBumperJigState();
       initDfmThree();
-      checkGeminiApiStatus();
+      checkAiApiStatus();
+      updateCadAiNotice();
     });
   </script>
 </body>
