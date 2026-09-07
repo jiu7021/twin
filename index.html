@@ -3894,15 +3894,36 @@
       if (geminiApiKey) {
         try {
           const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
-          const systemPrompt = "당신은 차체 생산기술 및 DFM(제조적합성) 엔지니어링 AI 'AutoJig Copilot'입니다. 1번 알루미늄 중공 빔(전장 2.8m, 내경 44x44mm, 상부 슬롯홀 2개소 폭방향 Z=±12mm), 2번 'ㅍ'자 보강 브라켓(외폭 40mm, 중공 26x38mm, 폭방향 대칭 수직 다리 2개소), Tool A 외측 그리퍼(외폭 72mm -> 44mm 빔 입구에 +28mm 간섭 충돌), Tool B AI 'ㅁ'자 코어 지그(25.5x37.5mm, 0.25mm slip-fit, 구배각 0.8도)에 대한 완벽한 공법 지식을 가집니다. 사용자의 모든 질문에 기술적으로 정확하고 간결한 한국어로 답변하세요. 시운전이 필요하면 [ACTION:SIMULATE], 충돌 테스트는 [ACTION:COLLIDE], 도면은 [ACTION:DRAWING], 부품 확대는 [ACTION:FOCUS_BEAM] 또는 [ACTION:FOCUS_BRACKET]을 답변 끝에 포함하세요.";
+          const systemInstructionText = 
+            "당신은 현대자동차/기아 생산기술본부 차체 조립 및 DFM(Design for Manufacturing) 디지털 트윈 특화 AI 'AutoJig Copilot'입니다.\n" +
+            "본 3D 시뮬레이터 시스템에 대해 다음과 같은 완벽한 전문 기하학/공법 지식을 보유하고 있습니다:\n" +
+            "1. 1번 파츠 (알루미늄 각형 중공 빔): 전장 2.8m, 외곽 54x54mm, 내부 중공 내경 44.0x44.0mm, 상부 슬롯홀 2개소(폭방향 Z=±12mm, X=700mm 스테이션).\n" +
+            "2. 2번 파츠 ('ㅍ'자 보강 브라켓): 외폭 40.0mm(빔 내부 삽입용), 중앙 'ㅁ'자 사각 중공 26.0x38.0mm, 상부 수직 돌출 다리 2개소(폭방향 대칭 Z=±12mm 배치).\n" +
+            "3. Tool A (기존 외측 집게 그리퍼): 외폭 72.0mm로 1번 빔 입구 외벽(44.0mm)에 +28.0mm 간섭 정면 충돌 발생(진입 불가 결함).\n" +
+            "4. Tool B (AI 생성 슬림 코어 푸시 지그): 브라켓 내부 'ㅁ'자 중공(26x38mm)으로 슬림 맨드릴 코어(25.5x37.5mm, 0.25mm slip-fit)가 결합하여 빔 내부로 간섭 0mm 전진 후, 상부 슬롯홀로 다리가 돌출되어 2개소 스폿용접(3.5kN, 8.5kA, 18cycles)을 완료하고 0.8° 구배각으로 고착 없이 인출 탈거됨.\n" +
+            "5. 6차종 범퍼 공용화 지그: 서보 리프트(곡률별 들뜸 보정), 가변 가이드 ON/OFF, 수직 원통형 듀얼 클램프 연계 공법.\n" +
+            "당신은 일반적인 대화가 아니라, 항상 위 3D 모델링 및 양산 공법과 연계하여 전문 엔지니어링 어조(한국어)로 명쾌하게 설명해야 합니다.\n" +
+            "사용자의 의도에 따라 답변 끝에 다음 액션 명령 태그를 1개 이상 반드시 첨부하여 3D 뷰어를 직접 제어하세요:\n" +
+            "- 시운전/조립/가동 요청 시: [ACTION:SIMULATE]\n" +
+            "- 간섭/충돌 테스트 요청 시: [ACTION:COLLIDE]\n" +
+            "- 2D 도면/치수/공차 요청 시: [ACTION:DRAWING]\n" +
+            "- 1번 빔 보기 요청 시: [ACTION:FOCUS_BEAM]\n" +
+            "- 2번 브라켓 보기 요청 시: [ACTION:FOCUS_BRACKET]\n" +
+            "- 그리퍼 보기 요청 시: [ACTION:FOCUS_GRIPPER]\n" +
+            "- 코어 지그 보기 요청 시: [ACTION:FOCUS_JIG]\n" +
+            "- X-Ray 투시 요청 시: [ACTION:XRAY]\n" +
+            "- 초기화 요청 시: [ACTION:RESET]";
 
           const res = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              system_instruction: {
+                parts: [{ text: systemInstructionText }]
+              },
               contents: [{
                 role: 'user',
-                parts: [{ text: `${systemPrompt}\n\n사용자 질의: ${text}` }]
+                parts: [{ text: `[AutoJig DFM 3D Context] 사용자 질의: ${text}` }]
               }]
             })
           });
@@ -3914,19 +3935,23 @@
           if (data.candidates && data.candidates[0] && data.candidates[0].content) {
             let rawReply = data.candidates[0].content.parts[0].text;
             
-            // Execute Action triggers
+            // Execute Dynamic 3D Action Triggers
             if (rawReply.includes('[ACTION:SIMULATE]')) runFullDfmKinematicSimulation();
             if (rawReply.includes('[ACTION:COLLIDE]')) runConventionalGripperTest();
             if (rawReply.includes('[ACTION:DRAWING]')) showDrawingModal();
             if (rawReply.includes('[ACTION:FOCUS_BEAM]')) highlightDfmPart('beam');
             if (rawReply.includes('[ACTION:FOCUS_BRACKET]')) highlightDfmPart('bracket');
+            if (rawReply.includes('[ACTION:FOCUS_GRIPPER]')) highlightDfmPart('gripper');
+            if (rawReply.includes('[ACTION:FOCUS_JIG]')) highlightDfmPart('coreJig');
+            if (rawReply.includes('[ACTION:XRAY]')) toggleDfmXRay();
+            if (rawReply.includes('[ACTION:RESET]')) resetDfmScene();
 
             rawReply = rawReply
               .replace(/\[ACTION:[A-Z_]+\]/g, '')
               .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
               .replace(/\n/g, '<br>');
 
-            renderCopilotBubble(rawReply, 'Gemini 2.5 Live', 'text-cyan-300');
+            renderCopilotBubble(rawReply, 'Gemini 2.5 Live (3D 특화)', 'text-cyan-300');
             return;
           }
         } catch (err) {
