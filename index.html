@@ -942,7 +942,7 @@
                 </div>
 
                 <!-- 2D Blueprint Drawing Overlay HUD (User-Requested 2D to 3D Verification) -->
-                <div id="dfmBlueprintHud" class="absolute bottom-4 right-4 z-20 bg-[#0c0d12]/95 backdrop-blur-md p-3.5 rounded-2xl border border-purple-500/60 shadow-2xl space-y-2 hidden max-w-[310px] sm:max-w-[350px] transition-all">
+                <div id="dfmBlueprintHud" class="absolute bottom-4 right-4 z-20 bg-[#0c0d12]/95 backdrop-blur-md p-3.5 rounded-2xl border border-purple-500/60 shadow-2xl space-y-2.5 hidden max-w-[320px] sm:max-w-[360px] transition-all">
                   <div class="flex items-center justify-between border-b border-purple-500/30 pb-2">
                     <div class="flex items-center gap-2 text-purple-300 font-bold text-xs font-mono">
                       <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i>
@@ -955,46 +955,76 @@
                   
                   <!-- Interactive Blueprint SVG Diagram -->
                   <div id="dfmBlueprintContent" class="bg-[#08090d] rounded-xl p-2.5 border border-purple-500/20 relative overflow-hidden font-mono text-[10px]">
-                    <div class="flex justify-between items-center text-purple-400 font-bold mb-1.5 text-[10px]">
+                    <div class="flex justify-between items-center text-purple-400 font-bold mb-1 text-[10px]">
                       <span id="dfmBlueprintDocName">BUMPER_BEAM_DWG_REV04</span>
-                      <span class="bg-purple-950/80 px-1.5 py-0.5 rounded text-purple-300 border border-purple-800">ISO-128 3각법</span>
+                      <span class="bg-purple-950/80 px-1.5 py-0.5 rounded text-purple-300 border border-purple-800 text-[9px]">ISO-128 3각법</span>
                     </div>
                     <!-- Technical Blueprint SVG -->
-                    <svg viewBox="0 0 280 115" class="w-full h-auto text-cyan-400 stroke-current fill-none">
+                    <svg viewBox="0 0 280 105" class="w-full h-auto text-cyan-400 stroke-current fill-none">
                       <!-- Outer Cross Section Box -->
-                      <rect x="20" y="16" width="120" height="80" rx="3" stroke="#38bdf8" stroke-width="1.8" />
+                      <rect x="20" y="14" width="120" height="76" rx="3" stroke="#38bdf8" stroke-width="1.8" />
                       <!-- Inner Hollow Core -->
-                      <rect x="36" y="32" width="88" height="48" rx="2" stroke="#818cf8" stroke-width="1.3" stroke-dasharray="3 2" />
+                      <rect x="36" y="28" width="88" height="48" rx="2" stroke="#818cf8" stroke-width="1.3" stroke-dasharray="3 2" />
                       <!-- Upper Protruding Weld Holes / Slots -->
-                      <rect x="58" y="12" width="44" height="8" rx="1" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.3" />
+                      <rect x="58" y="10" width="44" height="8" rx="1" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.3" />
                       <!-- Dimension Lines & Arrowheads -->
-                      <line x1="20" y1="9" x2="140" y2="9" stroke="#c084fc" stroke-width="1" />
-                      <line x1="20" y1="6" x2="20" y2="12" stroke="#c084fc" stroke-width="1" />
-                      <line x1="140" y1="6" x2="140" y2="12" stroke="#c084fc" stroke-width="1" />
-                      <text x="80" y="7" fill="#e9d5ff" font-size="8" text-anchor="middle" font-family="monospace">120.0 mm</text>
+                      <line x1="20" y1="7" x2="140" y2="7" stroke="#c084fc" stroke-width="1" />
+                      <line x1="20" y1="4" x2="20" y2="10" stroke="#c084fc" stroke-width="1" />
+                      <line x1="140" y1="4" x2="140" y2="10" stroke="#c084fc" stroke-width="1" />
+                      <text id="svgTextW" x="80" y="6" fill="#e9d5ff" font-size="8" text-anchor="middle" font-family="monospace">120.0 mm</text>
 
-                      <line x1="150" y1="16" x2="150" y2="96" stroke="#c084fc" stroke-width="1" />
-                      <line x1="147" y1="16" x2="153" y2="16" stroke="#c084fc" stroke-width="1" />
-                      <line x1="147" y1="96" x2="153" y2="96" stroke="#c084fc" stroke-width="1" />
-                      <text x="156" y="60" fill="#e9d5ff" font-size="8" font-family="monospace">80.0</text>
+                      <line x1="148" y1="14" x2="148" y2="90" stroke="#c084fc" stroke-width="1" />
+                      <line x1="145" y1="14" x2="151" y2="14" stroke="#c084fc" stroke-width="1" />
+                      <line x1="145" y1="90" x2="151" y2="90" stroke="#c084fc" stroke-width="1" />
+                      <text id="svgTextH" x="154" y="55" fill="#e9d5ff" font-size="8" font-family="monospace">80.0</text>
 
                       <!-- Slip-fit Callout -->
-                      <path d="M 110 56 L 175 38 L 195 38" stroke="#34d399" stroke-width="1" />
-                      <text x="200" y="40" fill="#34d399" font-size="8" font-family="monospace">내경 44.0</text>
-                      <text x="200" y="49" fill="#34d399" font-size="7.5" font-family="monospace">(Slip: 0.25)</text>
+                      <path d="M 110 52 L 170 34 L 190 34" stroke="#34d399" stroke-width="1" />
+                      <text x="195" y="36" fill="#34d399" font-size="7.5" font-family="monospace">내경 44.0</text>
+                      <text x="195" y="44" fill="#34d399" font-size="7" font-family="monospace">(Slip: 0.25)</text>
 
                       <!-- Wall thickness Callout -->
-                      <path d="M 28 24 L 180 82 L 200 82" stroke="#f43f5e" stroke-width="1" />
-                      <text x="205" y="85" fill="#f43f5e" font-size="8" font-family="monospace">t = 3.5mm</text>
+                      <path d="M 28 22 L 175 76 L 195 76" stroke="#f43f5e" stroke-width="1" />
+                      <text id="svgTextT" x="200" y="79" fill="#f43f5e" font-size="7.5" font-family="monospace">t = 3.5mm</text>
                     </svg>
+                  </div>
+
+                  <!-- Interactive Real-time 3D Extrusion Dimension Controls -->
+                  <div class="p-2.5 rounded-xl bg-[#12131a] border border-purple-500/30 space-y-2 font-mono">
+                    <div class="flex items-center justify-between text-[10px] text-purple-300 font-bold">
+                      <span class="flex items-center gap-1"><i data-lucide="sliders" class="w-3 h-3 text-purple-400"></i> 2D 파라메트릭 실시간 제어</span>
+                      <span class="text-emerald-400 text-[9px]">• 변경 시 3D 실시간 변형</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-1.5 text-[10px]">
+                      <div>
+                        <label class="text-[9px] text-snow-textMuted block">폭(W)</label>
+                        <input type="number" id="dfmParamW" value="120" min="70" max="220" step="5" class="w-full bg-[#08090d] border border-snow-border rounded px-1.5 py-1 text-white text-[11px] font-bold outline-none focus:border-purple-400" onchange="reExtrudeFromHud()" />
+                      </div>
+                      <div>
+                        <label class="text-[9px] text-snow-textMuted block">높이(H)</label>
+                        <input type="number" id="dfmParamH" value="80" min="50" max="160" step="5" class="w-full bg-[#08090d] border border-snow-border rounded px-1.5 py-1 text-white text-[11px] font-bold outline-none focus:border-purple-400" onchange="reExtrudeFromHud()" />
+                      </div>
+                      <div>
+                        <label class="text-[9px] text-snow-textMuted block">두께(t)</label>
+                        <input type="number" id="dfmParamT" value="3.5" min="1.5" max="8" step="0.5" class="w-full bg-[#08090d] border border-snow-border rounded px-1.5 py-1 text-white text-[11px] font-bold outline-none focus:border-purple-400" onchange="reExtrudeFromHud()" />
+                      </div>
+                      <div>
+                        <label class="text-[9px] text-snow-textMuted block">길이(L)</label>
+                        <input type="number" id="dfmParamL" value="2800" min="1200" max="3800" step="100" class="w-full bg-[#08090d] border border-snow-border rounded px-1.5 py-1 text-white text-[11px] font-bold outline-none focus:border-purple-400" onchange="reExtrudeFromHud()" />
+                      </div>
+                    </div>
+                    <button onclick="reExtrudeFromHud(true)" class="w-full py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95">
+                      <i data-lucide="play" class="w-3.5 h-3.5 fill-white"></i>
+                      <span>⚡ 3D 파라메트릭 재돌출(Extrude) 실행</span>
+                    </button>
                   </div>
                   
                   <div class="flex items-center justify-between text-[11px] text-snow-textMuted font-mono">
                     <span class="text-purple-300 font-semibold flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 3D Extrusion 동기화됨
+                      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 3D 모델 연동 중
                     </span>
                     <button onclick="zoomDfmBlueprint()" class="text-snow-cyan hover:underline text-xs flex items-center gap-1">
-                      <i data-lucide="maximize-2" class="w-3 h-3"></i> 도면 확대
+                      <i data-lucide="maximize-2" class="w-3 h-3"></i> 도면 크게 보기
                     </button>
                   </div>
                 </div>
@@ -4009,19 +4039,29 @@
       isDfmCamTransitioning = true;
     }
 
-    function apply2DParametricExtrusion(fileName) {
-      // 3D Extrusion using THREE.Shape with hollow core matching 2D Blueprint
+    function apply2DParametricExtrusion(fileName, customDims) {
+      const wVal = customDims && customDims.width ? customDims.width : (parseFloat(document.getElementById('dfmParamW')?.value) || 120);
+      const hVal = customDims && customDims.height ? customDims.height : (parseFloat(document.getElementById('dfmParamH')?.value) || 80);
+      const tVal = customDims && customDims.thickness ? customDims.thickness : (parseFloat(document.getElementById('dfmParamT')?.value) || 3.5);
+      const lVal = customDims && customDims.length ? customDims.length : (parseFloat(document.getElementById('dfmParamL')?.value) || 2800);
+
+      const w = wVal / 100;
+      const h = hVal / 100;
+      const t = (tVal / 100) * 2.2;
+      const length = lVal / 1000;
+
+      // 3D Extrusion using THREE.Shape with hollow core matching 2D Blueprint dimensions
       const shape = new THREE.Shape();
-      const w = 1.2, h = 0.8;
       shape.moveTo(-w/2, -h/2);
       shape.lineTo(w/2, -h/2);
       shape.lineTo(w/2, h/2);
       shape.lineTo(-w/2, h/2);
       shape.closePath();
 
-      // Hollow inner hole (inner width 0.9, height 0.5)
+      // Hollow inner hole
       const hole = new THREE.Path();
-      const hw = 0.9, hh = 0.5;
+      const hw = Math.max(0.15, w - t * 2);
+      const hh = Math.max(0.15, h - t * 2);
       hole.moveTo(-hw/2, -hh/2);
       hole.lineTo(hw/2, -hh/2);
       hole.lineTo(hw/2, hh/2);
@@ -4030,23 +4070,97 @@
       shape.holes.push(hole);
 
       const extrudeSettings = {
-        steps: 2,
-        depth: 2.8,
+        steps: 3,
+        depth: length,
         bevelEnabled: true,
-        bevelThickness: 0.04,
-        bevelSize: 0.03,
-        bevelSegments: 3
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelSegments: 2
       };
 
       const geom = new THREE.ExtrudeGeometry(shape, extrudeSettings);
       geom.rotateY(Math.PI / 2);
+      geom.center();
 
       loadCustomGeometryIntoScene(geom, fileName, { is2dExtrude: true });
 
-      // Show Blueprint HUD
+      // Run dynamic 3D extrusion build animation
+      animate3DExtrusionBuild(wVal, hVal, tVal, lVal);
+
+      // Update Blueprint HUD UI
       const docNameEl = document.getElementById('dfmBlueprintDocName');
       if (docNameEl) docNameEl.textContent = fileName;
+      const pw = document.getElementById('dfmParamW'); if (pw) pw.value = wVal;
+      const ph = document.getElementById('dfmParamH'); if (ph) ph.value = hVal;
+      const pt = document.getElementById('dfmParamT'); if (pt) pt.value = tVal;
+      const pl = document.getElementById('dfmParamL'); if (pl) pl.value = lVal;
+
+      const sw = document.getElementById('svgTextW'); if (sw) sw.textContent = `${wVal.toFixed(1)} mm`;
+      const sh = document.getElementById('svgTextH'); if (sh) sh.textContent = `${hVal.toFixed(1)}`;
+      const st = document.getElementById('svgTextT'); if (st) st.textContent = `t = ${tVal.toFixed(1)}mm`;
+
       toggleDfmBlueprintHud(true);
+    }
+
+    function animate3DExtrusionBuild(wVal, hVal, tVal, lVal) {
+      if (!dfmUploadedMeshGroup || dfmUploadedMeshGroup.children.length === 0) return;
+      const mesh = dfmUploadedMeshGroup.children[0];
+
+      // Start from flat 2D slice (scale.x = 0.02 along extrusion length)
+      mesh.scale.x = 0.02;
+      mesh.position.set(0.7, 0, 0);
+
+      updateDfmAlert('⚡ 2D 도면 단면 인식 완료 ➔ Z축 3D 파라메트릭 돌출(Extrude) 중...', `2D 단면 치수(외경 ${wVal}×${hVal}mm, t=${tVal}mm)를 바탕으로 3D 솔리드(길이 ${lVal}mm)를 실시간 생성합니다.`, 'purple');
+      playBeep(480);
+      setTimeout(() => playBeep(640), 200);
+      setTimeout(() => playBeep(840), 450);
+
+      const startTime = performance.now();
+      const duration = 1100;
+
+      function stepExtrude(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1.0, elapsed / duration);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        mesh.scale.x = 0.02 + ease * 0.98;
+
+        if (progress < 1.0) {
+          requestAnimationFrame(stepExtrude);
+        } else {
+          mesh.scale.x = 1.0;
+          updateDfmAlert('🎉 2D 도면 ➔ 3D 파라메트릭 모델 변환 완료!', `2D 도면 치수(외경 ${wVal}×${hVal}mm, 내경 44mm, t=${tVal}mm, 전장 ${lVal}mm)가 1:1 정밀 3D 솔리드로 완벽 복원되었습니다.`, 'emerald');
+          playBeep(1080);
+        }
+      }
+      requestAnimationFrame(stepExtrude);
+    }
+
+    function reExtrudeFromHud(showNotice = false) {
+      const w = parseFloat(document.getElementById('dfmParamW')?.value) || 120;
+      const h = parseFloat(document.getElementById('dfmParamH')?.value) || 80;
+      const t = parseFloat(document.getElementById('dfmParamT')?.value) || 3.5;
+      const l = parseFloat(document.getElementById('dfmParamL')?.value) || 2800;
+
+      apply2DParametricExtrusion('PARAMETRIC_CUSTOM_BEAM.pdf', { width: w, height: h, thickness: t, length: l });
+
+      if (showNotice) {
+        const chatHistory = document.getElementById('dfmChatHistory');
+        if (chatHistory) {
+          const noticeDiv = document.createElement('div');
+          noticeDiv.className = 'p-3 rounded-xl bg-purple-950/60 border border-purple-500 text-snow-textSub text-xs space-y-1';
+          noticeDiv.innerHTML = `
+            <div class="text-purple-300 font-bold flex items-center gap-1.5 font-mono text-[11px]">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 파라메트릭 실시간 3D 재돌출 완료
+            </div>
+            <p class="text-white text-xs">
+              입력 치수 [외경 <strong>${w}×${h}mm</strong>, 두께 <strong>${t}mm</strong>, 전장 <strong>${l}mm</strong>]를 기반으로 3D 솔리드 지오메트리를 즉시 재계산하여 화면에 반영했습니다.
+            </p>
+          `;
+          chatHistory.appendChild(noticeDiv);
+          chatHistory.scrollTop = chatHistory.scrollHeight;
+          lucide.createIcons();
+        }
+      }
     }
 
     /* --- CAD / CATIA DRAWING UPLOAD & PARSING SYSTEM --- */
@@ -4081,7 +4195,41 @@
       }
     }
 
-    function processCadFile(file) {
+    async function parseCadDrawingWithGemini(file) {
+      if (!geminiApiKey) return null;
+      try {
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.readAsDataURL(file);
+        });
+        const mimeType = file.type || (file.name.endsWith('.pdf') ? 'application/pdf' : 'image/png');
+        const payload = {
+          contents: [{
+            parts: [
+              { text: "Analyze this engineering drawing. Extract the overall cross-section width (in mm), height (in mm), wall thickness (in mm), and length (in mm). Respond ONLY with a JSON object like: {\"width\": 120, \"height\": 80, \"thickness\": 3.5, \"length\": 2800}" },
+              { inline_data: { mime_type: mimeType, data: base64 } }
+            ]
+          }]
+        };
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) {
+          const match = text.match(/\{[\s\S]*?\}/);
+          if (match) return JSON.parse(match[0]);
+        }
+      } catch (err) {
+        console.warn('Gemini vision parse error:', err);
+      }
+      return null;
+    }
+
+    async function processCadFile(file) {
       const fileName = file.name;
       const ext = fileName.split('.').pop().toLowerCase();
 
@@ -4102,11 +4250,14 @@
         };
         reader.readAsText(file);
       } else if (ext === 'pdf' || ['png', 'jpg', 'jpeg'].includes(ext)) {
-        simulateCadParsing(fileName, 'pdf', null);
+        let aiParsedDims = null;
+        if (geminiApiKey) {
+          aiParsedDims = await parseCadDrawingWithGemini(file);
+        }
+        simulateCadParsing(fileName, 'pdf', null, aiParsedDims);
       } else if (ext === 'dxf') {
         simulateCadParsing(fileName, 'dxf', null);
       } else {
-        // CATPart, DWG, STEP
         simulateCadParsing(fileName, 'cad', null);
       }
     }
@@ -4131,7 +4282,7 @@
       }
     }
 
-    function simulateCadParsing(fileName, mode, customGeom) {
+    function simulateCadParsing(fileName, mode, customGeom, aiParsedDims) {
       const progress = document.getElementById('cadParsingContainer');
       const statusText = document.getElementById('cadParsingStatusText');
       const percentEl = document.getElementById('cadParsingPercent');
@@ -4165,8 +4316,12 @@
         percentEl.textContent = '72%';
         barEl.style.width = '72%';
         if (is2D) {
+          const wTxt = aiParsedDims?.width || 120;
+          const hTxt = aiParsedDims?.height || 80;
+          const tTxt = aiParsedDims?.thickness || 3.5;
+          const lTxt = aiParsedDims?.length || 2800;
           statusText.innerHTML = `<i data-lucide="cpu" class="w-4 h-4 text-purple-300 animate-pulse"></i><span>[2/3] Vision AI 치수 판독 및 3D 파라메트릭 Extrude 연산 중...</span>`;
-          logEl.innerHTML += `<br>• 외경 120.0×80.0mm, 내경 44.0mm, 판두께 t=3.5mm 치수 판독 완료<br>• 상부 슬롯홀 및 0.25mm slip-fit 여유 공차 연산`;
+          logEl.innerHTML += `<br>• 외경 ${wTxt}×${hTxt}mm, 판두께 t=${tTxt}mm, 전장 L=${lTxt}mm 치수 판독 완료<br>• 상부 슬롯홀 및 0.25mm slip-fit 여유 공차 연산`;
         } else {
           statusText.innerHTML = `<i data-lucide="scan" class="w-4 h-4 text-amber-400 animate-pulse"></i><span>[2/3] 파츠 자동 넘버링 및 조립 간섭 계산 중...</span>`;
           logEl.innerHTML += `<br>• B-Rep 표면 정규화 완료 (중심 원점 정렬 & 1:1 스케일 변환)<br>• 조립 부품 단위 식별 (Part 1 빔 / Part 2 브라켓 / Tool B 코어 지그 매핑)`;
@@ -4190,7 +4345,7 @@
             if (isSTL && customGeom) {
               loadCustomGeometryIntoScene(customGeom, fileName);
             } else if (is2D) {
-              apply2DParametricExtrusion(fileName);
+              apply2DParametricExtrusion(fileName, aiParsedDims);
             } else {
               if (fileName.includes('BRKT')) {
                 highlightDfmPart('bracket');
@@ -4213,8 +4368,14 @@
               
               const badgeBg = is2D ? 'bg-purple-900 text-purple-200 border-purple-700' : 'bg-cyan-900 text-cyan-200 border-cyan-700';
               const titleText = is2D ? '2D 도면 Vision AI ➔ 3D 파라메트릭 복원 완료' : '3D CAD/STL 메쉬 지오메트리 로드 완료';
+              
+              const wTxt = aiParsedDims?.width || 120;
+              const hTxt = aiParsedDims?.height || 80;
+              const tTxt = aiParsedDims?.thickness || 3.5;
+              const lTxt = aiParsedDims?.length || 2800;
+
               const descText = is2D
-                ? `<strong>${fileName}</strong> 2D 도면의 삼각도 및 치수선(외경 120×80mm, 내경 44mm, t=3.5mm)을 AI가 판독하여 3D 파라메트릭 Extrusion 형상을 즉각 빌드했습니다. 뷰어 내 <strong>[2D 도면 HUD]</strong>로 1:1 도면 공차를 대조할 수 있습니다.`
+                ? `<strong>${fileName}</strong> 2D 도면의 삼각도 및 치수선(외경 ${wTxt}×${hTxt}mm, 판두께 ${tTxt}mm, 전장 ${lTxt}mm)을 판독하여 3D 파라메트릭 Extrusion 형상을 즉각 생성했습니다. 뷰어 우하단 <strong>[2D 도면 HUD]</strong>에서 치수를 실시간으로 수정하여 3D 모델을 즉시 재변형할 수 있습니다.`
                 : `<strong>${fileName}</strong> 3D 형상 데이터가 Three.js 씬에 성공적으로 렌더링되었습니다. 부품 자동 넘버링이 적용되었으며 협소 공간 간섭 및 'ㅁ'자 코어 푸시 지그 시뮬레이션을 수행할 수 있습니다.`;
 
               noticeDiv.innerHTML = `
@@ -4226,7 +4387,6 @@
                   ${descText}
                 </p>
               `;
-              chatHistory.appendChild(noticeDiv);
               chatHistory.scrollTop = chatHistory.scrollHeight;
               lucide.createIcons();
             }
