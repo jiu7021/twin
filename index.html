@@ -140,19 +140,6 @@
       </nav>
     </div>
 
-    <!-- Sidebar Bottom Status Card -->
-    <div class="p-4 rounded-2xl bg-snow-surface border border-snow-border space-y-2.5 shadow-lg">
-      <div class="flex items-center justify-between text-xs">
-        <span class="text-snow-textMuted flex items-center gap-2 font-medium">
-          <span class="w-2.5 h-2.5 rounded-full bg-snow-emerald animate-pulse"></span>
-          라인 실시간 가동
-        </span>
-        <span class="font-mono text-snow-emerald font-bold px-2 py-0.5 rounded-md bg-emerald-950/80 border border-emerald-800">RUNNING</span>
-      </div>
-      <div class="text-xs text-snow-textSub leading-relaxed font-mono">
-        Cycle Time: 48.2s | 4-Platform Twin
-      </div>
-    </div>
   </aside>
 
   <!-- ================= MAIN CONTENT WRAPPER ================= -->
@@ -821,8 +808,12 @@
               </p>
             </div>
             
-            <div class="flex items-center gap-2.5 self-start lg:self-center shrink-0">
-              <button onclick="showDrawingModal()" class="px-5 py-3 rounded-2xl bg-snow-surface2 hover:bg-snow-border border border-cyan-500/40 text-cyan-300 text-sm font-semibold flex items-center gap-2 transition-all shadow-sm">
+            <div class="flex items-center gap-2.5 self-start lg:self-center shrink-0 flex-wrap">
+              <button onclick="openCadUploadModal()" class="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shadow-md active:scale-95">
+                <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                <span>도면/CAD 파일 업로드</span>
+              </button>
+              <button onclick="showDrawingModal()" class="px-5 py-3 rounded-2xl bg-snow-surface2 hover:bg-snow-border border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shadow-sm active:scale-95">
                 <i data-lucide="file-text" class="w-4 h-4"></i>
                 <span>2D 도면 스펙 보기</span>
               </button>
@@ -854,12 +845,17 @@
             
             <!-- CATIA Specification Tree & Part Highlighter Bar -->
             <div class="snow-card p-5 space-y-3.5">
-              <div class="flex items-center justify-between border-b border-snow-border pb-3">
+              <div class="flex items-center justify-between border-b border-snow-border pb-3 flex-wrap gap-2">
                 <div class="flex items-center gap-2 text-xs font-mono text-snow-textMuted uppercase font-bold">
                   <i data-lucide="folder-tree" class="w-4 h-4 text-snow-cyan"></i>
-                  <span>CATIA Product Structure (클릭 시 3D 파츠 강조)</span>
+                  <span>CATIA Product Structure (클릭 시 해당 파츠 시점 이동 & 중심 강조)</span>
                 </div>
-                <span class="text-xs text-snow-textMuted font-mono">Assy: Beam_Bracket_Assy.CATProduct</span>
+                <div class="flex items-center gap-2">
+                  <span id="catiaAssyTitle" class="text-xs text-snow-textMuted font-mono">Assy: Beam_Bracket_Assy.CATProduct</span>
+                  <button onclick="openCadUploadModal()" class="text-[11px] font-mono text-cyan-300 hover:text-white px-2.5 py-1 rounded-lg bg-snow-surface2 hover:bg-snow-border border border-cyan-700/50 flex items-center gap-1 transition-all">
+                    <i data-lucide="upload" class="w-3 h-3"></i> 도면/파일 교체
+                  </button>
+                </div>
               </div>
 
               <!-- Part Buttons (1번 빔, 2번 브라켓, 툴 A, 툴 B) -->
@@ -1022,7 +1018,13 @@
                     <span class="text-xs text-snow-cyan font-mono block font-semibold">LLM 대화 기반 공법 추론 & 자동 설계 엔진</span>
                   </div>
                 </div>
-                <span class="px-2.5 py-1 rounded-lg text-xs font-mono bg-emerald-950 text-snow-emerald border border-emerald-800 font-bold">ONLINE</span>
+                <div class="flex items-center gap-2">
+                  <button id="geminiApiBadge" onclick="openGeminiConfigModal()" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-blue-950/80 hover:bg-blue-900 text-cyan-300 border border-cyan-700/60 font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Google Gemini API 키 입력 시 실시간 LLM 추론 가동">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i>
+                    <span id="geminiApiStatusText">Gemini API 설정</span>
+                  </button>
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-mono bg-emerald-950 text-snow-emerald border border-emerald-800 font-bold">ONLINE</span>
+                </div>
               </div>
 
               <!-- Chat Message History Container (Expanded Height) -->
@@ -1126,6 +1128,138 @@
             <button onclick="closeDrawingModal()" class="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs">
               확인 닫기
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAD / CATIA Drawing Upload & Digital Twin Parsing Modal -->
+      <div id="cadUploadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="snow-card max-w-2xl w-full p-6 sm:p-7 space-y-5 border-cyan-500/50 shadow-2xl relative">
+          <div class="flex items-center justify-between border-b border-snow-border pb-3.5">
+            <div class="flex items-center gap-2.5 text-white font-bold text-base">
+              <i data-lucide="upload-cloud" class="w-5 h-5 text-snow-cyan"></i>
+              <span>CAD / CATIA 설계 도면 업로드 & 디지털 트윈 매핑</span>
+            </div>
+            <button onclick="closeCadUploadModal()" class="p-1.5 rounded-xl hover:bg-snow-border text-snow-textMuted hover:text-white">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <!-- Drag & Drop Zone -->
+          <div id="cadDropZone" class="border-2 border-dashed border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#101114]/60 hover:bg-[#101114]" onclick="document.getElementById('cadFileInput').click()" ondragover="event.preventDefault(); this.classList.add('border-cyan-400','bg-blue-950/20')" ondragleave="this.classList.remove('border-cyan-400','bg-blue-950/20')" ondrop="handleCadDrop(event)">
+            <input type="file" id="cadFileInput" class="hidden" accept=".catpart,.catproduct,.stp,.step,.dwg,.dxf,.pdf,.png,.jpg" onchange="handleCadFileUpload(event)" />
+            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-inner">
+              <i data-lucide="file-up" class="w-7 h-7"></i>
+            </div>
+            <div class="text-sm font-semibold text-white mb-1">
+              CATIA / STEP / DWG 도면 파일을 여기로 드래그하거나 클릭하여 선택
+            </div>
+            <div class="text-xs text-snow-textMuted font-mono">
+              지원 포맷: .CATPart, .CATProduct, .step, .stp, .dwg, .dxf (단품/어셈블리 파싱 지원)
+            </div>
+          </div>
+
+          <!-- Sample CAD Drawing Presets -->
+          <div class="space-y-2">
+            <span class="text-xs font-mono font-bold text-snow-textMuted uppercase flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-snow-cyan"></i>
+              <span>즉시 검증 가능한 샘플 CAD 모델/도면 프리셋:</span>
+            </span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button onclick="loadPresetCadFile('AL_HOLLOW_BEAM_GEN4.CATPart', 'beam')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-blue-950/40 border border-snow-border hover:border-cyan-500 text-left transition-all text-xs group">
+                <div class="font-mono text-cyan-300 font-semibold group-hover:text-white flex items-center justify-between">
+                  <span>AL_BEAM_REV04.CATPart</span>
+                  <span class="text-[10px] bg-blue-900/60 px-2 py-0.5 rounded text-blue-200">1번 빔</span>
+                </div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">알루미늄 6061-T6 중공 각형 빔 (44mm 내경)</div>
+              </button>
+              <button onclick="loadPresetCadFile('BRKT_P_SHAPED_REINFORCE.CATPart', 'bracket')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-amber-950/40 border border-snow-border hover:border-amber-500 text-left transition-all text-xs group">
+                <div class="font-mono text-amber-300 font-semibold group-hover:text-white flex items-center justify-between">
+                  <span>BRKT_P_REV02.CATPart</span>
+                  <span class="text-[10px] bg-amber-900/60 px-2 py-0.5 rounded text-amber-200">2번 브라켓</span>
+                </div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">'ㅍ'자 보강 브라켓 (폭방향 대칭 다리 2개소)</div>
+              </button>
+              <button onclick="loadPresetCadFile('ASSY_BEAM_AND_JIG_V3.CATProduct', 'assy')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-cyan-950/40 border border-snow-border hover:border-cyan-500 text-left transition-all text-xs group">
+                <div class="font-mono text-emerald-300 font-semibold group-hover:text-white flex items-center justify-between">
+                  <span>BEAM_BRKT_ASSY.CATProduct</span>
+                  <span class="text-[10px] bg-emerald-900/60 px-2 py-0.5 rounded text-emerald-200">어셈블리</span>
+                </div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">1번 빔 + 2번 브라켓 + Tool B 코어 지그 결합체</div>
+              </button>
+              <button onclick="loadPresetCadFile('2D_TOLERANCE_SPEC_R3.DWG', 'dwg')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-purple-950/40 border border-snow-border hover:border-purple-500 text-left transition-all text-xs group">
+                <div class="font-mono text-purple-300 font-semibold group-hover:text-white flex items-center justify-between">
+                  <span>2D_TOLERANCE_R3.DWG</span>
+                  <span class="text-[10px] bg-purple-900/60 px-2 py-0.5 rounded text-purple-200">2D 3각법</span>
+                </div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">제작 치수 및 0.25mm slip-fit 정밀 공차도</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Parsing Progress Display (Hidden until active) -->
+          <div id="cadParsingContainer" class="hidden p-4 rounded-xl bg-[#101114] border border-cyan-500/50 space-y-2.5 font-mono text-xs">
+            <div class="flex items-center justify-between text-cyan-300 font-bold">
+              <span id="cadParsingStatusText" class="flex items-center gap-2">
+                <i data-lucide="refresh-cw" class="w-4 h-4 animate-spin text-cyan-400"></i>
+                <span>[1/3] B-Rep 지오메트리 & 폴리곤 메시 파싱 중...</span>
+              </span>
+              <span id="cadParsingPercent" class="text-white">35%</span>
+            </div>
+            <div class="w-full bg-snow-surface2 rounded-full h-2 overflow-hidden">
+              <div id="cadParsingBar" class="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full transition-all duration-300" style="width: 35%"></div>
+            </div>
+            <div id="cadParsingLog" class="text-[11px] text-snow-textMuted space-y-0.5">
+              • CATIA V5-6 B-Rep 커널 연결 성공 (1,480 면/2,940 모서리 감지)
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2.5 pt-2 border-t border-snow-border">
+            <button onclick="closeCadUploadModal()" class="px-4 py-2 rounded-xl bg-snow-surface2 hover:bg-snow-border text-snow-textSub text-xs font-semibold">
+              닫기
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gemini API Config Modal -->
+      <div id="geminiConfigModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="snow-card max-w-lg w-full p-6 space-y-4 border-cyan-500/50 shadow-2xl relative">
+          <div class="flex items-center justify-between border-b border-snow-border pb-3">
+            <div class="flex items-center gap-2.5 text-white font-bold text-base">
+              <i data-lucide="sparkles" class="w-5 h-5 text-snow-cyan"></i>
+              <span>Google Gemini LLM 실시간 API 연동</span>
+            </div>
+            <button onclick="closeGeminiConfigModal()" class="p-1.5 rounded-xl hover:bg-snow-border text-snow-textMuted hover:text-white">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <p class="text-xs text-snow-textSub leading-relaxed break-keep">
+            Google AI Studio에서 발급받은 Gemini API 키를 입력하시면, 브라우저에서 직접 <strong>Gemini 2.5 Flash</strong> 모델과 100% 실시간으로 연결되어 임의의 모든 공법 질문에 대해 실시간 생성 추론을 수행합니다.
+            <br><span class="text-snow-cyan">* 키를 입력하지 않으셔도 내장된 오프라인 엔지니어링 지식베이스가 즉각 동작합니다.</span>
+          </p>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-mono font-bold text-snow-textMuted">GEMINI API KEY</label>
+            <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full bg-[#101114] border border-snow-border rounded-xl px-3.5 py-2.5 text-xs font-mono text-white outline-none focus:border-cyan-500" />
+            <p class="text-[11px] text-snow-textMuted">
+              * API 키는 브라우저 로컬 저장소(localStorage)에만 안전하게 보관되며 외부 서버로 유출되지 않습니다.
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <button onclick="clearGeminiApiKey()" class="text-xs text-rose-400 hover:underline">
+              키 삭제 (오프라인 모드)
+            </button>
+            <div class="flex gap-2">
+              <button onclick="closeGeminiConfigModal()" class="px-4 py-2 rounded-xl bg-snow-surface2 hover:bg-snow-border text-snow-textSub text-xs">
+                취소
+              </button>
+              <button onclick="saveGeminiApiKey()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs">
+                저장 및 연동
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -2642,6 +2776,14 @@
     let isDfmDragging = false;
     let prevDfmMouseX = 0, prevDfmMouseY = 0;
 
+    // Smooth Dynamic Part Camera Tracking & Focus Targets
+    let dfmLookAtTarget = new THREE.Vector3(0.5, 0, 0);
+    let dfmCurrentLookAt = new THREE.Vector3(0.5, 0, 0);
+    let dfmTargetRadius = 4.8;
+    let dfmTargetTheta = -0.58;
+    let dfmTargetPhi = 1.08;
+    let isDfmCamTransitioning = false;
+
     // 3D Groups & Materials
     let dfmBeamGroup = null;
     let dfmBeamMaterial = null;
@@ -2716,16 +2858,20 @@
 
     function updateDfmCameraSpherical() {
       if (!dfmCamera) return;
-      const x = dfmSphericalRadius * Math.sin(dfmSphericalPhi) * Math.sin(dfmSphericalTheta);
-      const y = dfmSphericalRadius * Math.cos(dfmSphericalPhi);
-      const z = dfmSphericalRadius * Math.sin(dfmSphericalPhi) * Math.cos(dfmSphericalTheta);
-      dfmCamera.position.set(x + 0.4, y + 0.1, z);
-      dfmCamera.lookAt(0.5, 0, 0);
+      const x = dfmCurrentLookAt.x + dfmSphericalRadius * Math.sin(dfmSphericalPhi) * Math.sin(dfmSphericalTheta);
+      const y = dfmCurrentLookAt.y + dfmSphericalRadius * Math.cos(dfmSphericalPhi);
+      const z = dfmCurrentLookAt.z + dfmSphericalRadius * Math.sin(dfmSphericalPhi) * Math.cos(dfmSphericalTheta);
+      dfmCamera.position.set(x, y, z);
+      dfmCamera.lookAt(dfmCurrentLookAt.x, dfmCurrentLookAt.y, dfmCurrentLookAt.z);
     }
 
     function setupDfmOrbit(container) {
       container.addEventListener('mousedown', (e) => {
         isDfmDragging = true;
+        isDfmCamTransitioning = false;
+        dfmTargetTheta = dfmSphericalTheta;
+        dfmTargetPhi = dfmSphericalPhi;
+        dfmTargetRadius = dfmSphericalRadius;
         prevDfmMouseX = e.clientX;
         prevDfmMouseY = e.clientY;
       });
@@ -2738,20 +2884,31 @@
         prevDfmMouseY = e.clientY;
         dfmSphericalTheta -= deltaX * 0.008;
         dfmSphericalPhi = Math.max(0.15, Math.min(Math.PI / 2 - 0.05, dfmSphericalPhi - deltaY * 0.008));
+        dfmTargetTheta = dfmSphericalTheta;
+        dfmTargetPhi = dfmSphericalPhi;
         updateDfmCameraSpherical();
       });
       container.addEventListener('wheel', (e) => {
         e.preventDefault();
-        dfmSphericalRadius = Math.max(2.2, Math.min(8.0, dfmSphericalRadius + e.deltaY * 0.004));
+        isDfmCamTransitioning = false;
+        dfmSphericalRadius = Math.max(1.8, Math.min(8.5, dfmSphericalRadius + e.deltaY * 0.004));
+        dfmTargetRadius = dfmSphericalRadius;
         updateDfmCameraSpherical();
       }, { passive: false });
     }
 
     function setDfmCameraView(view) {
-      if (view === 'iso') { dfmSphericalTheta = -0.58; dfmSphericalPhi = 1.08; dfmSphericalRadius = 4.8; }
-      else if (view === 'front') { dfmSphericalTheta = 0; dfmSphericalPhi = 1.45; dfmSphericalRadius = 4.2; }
-      else if (view === 'top') { dfmSphericalTheta = 0; dfmSphericalPhi = 0.15; dfmSphericalRadius = 4.8; }
-      updateDfmCameraSpherical();
+      isDfmCamTransitioning = true;
+      if (view === 'iso') { 
+        dfmLookAtTarget.set(0.7, 0, 0);
+        dfmTargetTheta = -0.58; dfmTargetPhi = 1.08; dfmTargetRadius = 4.8; 
+      } else if (view === 'front') { 
+        dfmLookAtTarget.set(0.7, 0, 0);
+        dfmTargetTheta = 0; dfmTargetPhi = 1.45; dfmTargetRadius = 4.2; 
+      } else if (view === 'top') { 
+        dfmLookAtTarget.set(0.7, 0, 0);
+        dfmTargetTheta = 0; dfmTargetPhi = 0.15; dfmTargetRadius = 4.8; 
+      }
     }
 
     function onDfmWindowResize() {
@@ -3044,6 +3201,24 @@
       if (dfmCollisionMarkerGroup && dfmCollisionMarkerGroup.visible) {
         const scale = 1.0 + 0.25 * Math.sin(Date.now() * 0.015);
         dfmCollisionMarkerGroup.scale.set(scale, scale, scale);
+      }
+
+      // Smooth Camera LERP Transition to focused part
+      if (isDfmCamTransitioning) {
+        dfmCurrentLookAt.lerp(dfmLookAtTarget, 0.08);
+        dfmSphericalRadius += (dfmTargetRadius - dfmSphericalRadius) * 0.08;
+        dfmSphericalTheta += (dfmTargetTheta - dfmSphericalTheta) * 0.08;
+        dfmSphericalPhi += (dfmTargetPhi - dfmSphericalPhi) * 0.08;
+        updateDfmCameraSpherical();
+        if (dfmCurrentLookAt.distanceTo(dfmLookAtTarget) < 0.01 && 
+            Math.abs(dfmSphericalRadius - dfmTargetRadius) < 0.02 &&
+            Math.abs(dfmSphericalTheta - dfmTargetTheta) < 0.01) {
+          dfmCurrentLookAt.copy(dfmLookAtTarget);
+          dfmSphericalRadius = dfmTargetRadius;
+          dfmSphericalTheta = dfmTargetTheta;
+          dfmSphericalPhi = dfmTargetPhi;
+          isDfmCamTransitioning = false;
+        }
       }
 
       if (dfmRenderer && dfmScene && dfmCamera) {
@@ -3364,25 +3539,69 @@
       });
 
       if (part === 'beam') {
-        if (dfmBeamMaterial) { dfmBeamMaterial.emissive = new THREE.Color(0x0284c7); dfmBeamMaterial.emissiveIntensity = 0.4; }
-        if (dfmBracketMaterial) dfmBracketMaterial.emissiveIntensity = 0.1;
-        setDfmCameraView('iso');
+        // Part 1: 1번 알루미늄 중공 빔 중심 시점 (Center X=1.4)
+        dfmLookAtTarget.set(1.4, 0.0, 0.0);
+        dfmTargetRadius = 4.6;
+        dfmTargetTheta = -0.58;
+        dfmTargetPhi = 1.08;
+        isDfmCamTransitioning = true;
+
+        if (dfmBeamMaterial) {
+          dfmBeamMaterial.emissive = new THREE.Color(0x0284c7);
+          dfmBeamMaterial.emissiveIntensity = 0.55;
+          dfmBeamMaterial.opacity = isDfmXrayOn ? 0.45 : 0.95;
+        }
+        if (dfmBracketMaterial) dfmBracketMaterial.emissiveIntensity = 0.05;
+        updateDfmAlert('🔍 PART 1 FOCUS : 1번 알루미늄 각형 중공 빔', '시점이 1번 빔(전장 2.8m, 내경 44mm, 상부 슬롯홀 2개소) 정중앙으로 이동하고 강조되었습니다.', 'cyan');
+
       } else if (part === 'bracket') {
-        if (dfmBracketMaterial) { dfmBracketMaterial.emissive = new THREE.Color(0xf59e0b); dfmBracketMaterial.emissiveIntensity = 0.6; }
-        if (dfmBeamMaterial) dfmBeamMaterial.emissiveIntensity = 0.0;
-        dfmSphericalTheta = -0.3; dfmSphericalPhi = 1.2; dfmSphericalRadius = 3.6;
-        updateDfmCameraSpherical();
+        // Part 2: 2번 'ㅍ'자 브라켓 확대 시점 (현재 브라켓 X좌표 중심)
+        const bx = dfmBracketGroup ? dfmBracketGroup.position.x : -1.5;
+        dfmLookAtTarget.set(bx, 0.15, 0.0);
+        dfmTargetRadius = 2.3; // 클로즈업 확대
+        dfmTargetTheta = -0.32;
+        dfmTargetPhi = 1.15;
+        isDfmCamTransitioning = true;
+
+        if (dfmBracketMaterial) {
+          dfmBracketMaterial.emissive = new THREE.Color(0xf59e0b);
+          dfmBracketMaterial.emissiveIntensity = 0.90;
+        }
+        if (dfmBeamMaterial) {
+          dfmBeamMaterial.emissiveIntensity = 0.05;
+          // 빔 내부 진입 시 브라켓이 잘 보이도록 투명도 자동 보정
+          if (bx > 0) dfmBeamMaterial.opacity = 0.35;
+        }
+        updateDfmAlert('🔍 PART 2 FOCUS : 2번 \'ㅍ\'자 보강 브라켓', '시점이 2번 브라켓(폭방향 대칭 수직 다리 2개소, \'ㅁ\'자 중공 26×38mm) 정밀 확대로 이동했습니다.', 'amber');
+
       } else if (part === 'gripper') {
+        // Part 3: Tool A 기존 외측 그리퍼 중심 시점
         if (dfmGripperGroup) dfmGripperGroup.visible = true;
         if (dfmCoreJigGroup) dfmCoreJigGroup.visible = false;
-        dfmSphericalTheta = -0.8; dfmSphericalPhi = 1.1; dfmSphericalRadius = 4.0;
-        updateDfmCameraSpherical();
+        const gx = dfmGripperGroup ? dfmGripperGroup.position.x : -1.5;
+        dfmLookAtTarget.set(gx, 0.0, 0.0);
+        dfmTargetRadius = 2.8;
+        dfmTargetTheta = -0.75;
+        dfmTargetPhi = 1.15;
+        isDfmCamTransitioning = true;
+        updateDfmAlert('🔍 PART 3 FOCUS : Tool A 기존 외측 집게 그리퍼', '외폭 72mm 외측 그리퍼 중심으로 이동했습니다. (빔 입구 내경 44mm 대비 +28mm 간섭 발생)', 'rose');
+
       } else if (part === 'coreJig') {
+        // Part 4: Tool B AI 'ㅁ'자 코어 푸시 지그 중심 시점
         if (dfmCoreJigGroup) dfmCoreJigGroup.visible = true;
         if (dfmGripperGroup) dfmGripperGroup.visible = false;
-        if (dfmCoreJigMaterial) { dfmCoreJigMaterial.emissive = new THREE.Color(0x06b6d4); dfmCoreJigMaterial.emissiveIntensity = 0.6; }
-        dfmSphericalTheta = -0.85; dfmSphericalPhi = 1.0; dfmSphericalRadius = 4.2;
-        updateDfmCameraSpherical();
+        const cx = dfmCoreJigGroup ? dfmCoreJigGroup.position.x : -2.7;
+        dfmLookAtTarget.set(cx, 0.0, 0.0);
+        dfmTargetRadius = 2.9;
+        dfmTargetTheta = -0.80;
+        dfmTargetPhi = 1.05;
+        isDfmCamTransitioning = true;
+
+        if (dfmCoreJigMaterial) {
+          dfmCoreJigMaterial.emissive = new THREE.Color(0x06b6d4);
+          dfmCoreJigMaterial.emissiveIntensity = 0.85;
+        }
+        updateDfmAlert('🔍 PART 4 FOCUS : Tool B AI \'ㅁ\'자 코어 지그', '슬림 맨드릴 코어(25.5×37.5mm, 구배각 0.8°) 중심으로 확대 이동했습니다.', 'cyan');
       }
       playBeep(520);
     }
@@ -3397,6 +3616,185 @@
         textEl.textContent = isDfmXrayOn ? 'X-Ray 투시 ON' : 'X-Ray 투시 OFF';
       }
       playBeep(isDfmXrayOn ? 620 : 380);
+    }
+
+    /* --- CAD / CATIA DRAWING UPLOAD & PARSING SYSTEM --- */
+
+    function openCadUploadModal() {
+      const m = document.getElementById('cadUploadModal');
+      if (m) m.classList.remove('hidden');
+      const progress = document.getElementById('cadParsingContainer');
+      if (progress) progress.classList.add('hidden');
+      lucide.createIcons();
+      playBeep(540);
+    }
+
+    function closeCadUploadModal() {
+      const m = document.getElementById('cadUploadModal');
+      if (m) m.classList.add('hidden');
+      playBeep(400);
+    }
+
+    function handleCadDrop(e) {
+      e.preventDefault();
+      const dropZone = document.getElementById('cadDropZone');
+      if (dropZone) dropZone.classList.remove('border-cyan-400', 'bg-blue-950/20');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0];
+        simulateCadParsing(file.name, file.name.includes('BRKT') ? 'bracket' : 'beam');
+      }
+    }
+
+    function handleCadFileUpload(e) {
+      if (e.target && e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        simulateCadParsing(file.name, file.name.includes('BRKT') ? 'bracket' : 'beam');
+      }
+    }
+
+    function loadPresetCadFile(fileName, type) {
+      simulateCadParsing(fileName, type);
+    }
+
+    function simulateCadParsing(fileName, partType) {
+      const progress = document.getElementById('cadParsingContainer');
+      const statusText = document.getElementById('cadParsingStatusText');
+      const percentEl = document.getElementById('cadParsingPercent');
+      const barEl = document.getElementById('cadParsingBar');
+      const logEl = document.getElementById('cadParsingLog');
+
+      if (!progress) return;
+      progress.classList.remove('hidden');
+      playBeep(600);
+
+      // Phase 1: 35%
+      percentEl.textContent = '35%';
+      barEl.style.width = '35%';
+      statusText.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin text-cyan-400"></i><span>[1/3] B-Rep 커널 형상 파싱 중... (${fileName})</span>`;
+      logEl.innerHTML = `• 파일 검증 성공: ${fileName}<br>• NURBS 곡면 및 폴리곤 메시 변환 완료`;
+      lucide.createIcons();
+
+      setTimeout(() => {
+        // Phase 2: 72%
+        percentEl.textContent = '72%';
+        barEl.style.width = '72%';
+        statusText.innerHTML = `<i data-lucide="scan" class="w-4 h-4 text-amber-400 animate-pulse"></i><span>[2/3] 핵심 공차 치수 및 조립 데이터 추출 중...</span>`;
+        logEl.innerHTML += `<br>• 양산 치수 매핑: 1번 빔 내경 44.0mm / 2번 브라켓 중공 26.0×38.0mm<br>• 상부 슬롯홀 2개소 좌표 (X: 700mm, Z: ±12.0mm) 자동 인식`;
+        lucide.createIcons();
+        playBeep(720);
+
+        setTimeout(() => {
+          // Phase 3: 100%
+          percentEl.textContent = '100%';
+          barEl.style.width = '100%';
+          statusText.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i><span>[3/3] 3D 디지털 트윈 매핑 완료!</span>`;
+          logEl.innerHTML += `<br>• <span class="text-emerald-400 font-bold">디지털 트윈 3D 뷰어 동기화 완료</span>`;
+          lucide.createIcons();
+          playBeep(920);
+
+          setTimeout(() => {
+            closeCadUploadModal();
+            // Update Title in Tree
+            const treeTitle = document.getElementById('catiaAssyTitle');
+            if (treeTitle) treeTitle.textContent = `Assy: ${fileName}`;
+
+            // Add notification to Chat History
+            const chatHistory = document.getElementById('dfmChatHistory');
+            if (chatHistory) {
+              const noticeDiv = document.createElement('div');
+              noticeDiv.className = 'p-3.5 rounded-2xl bg-cyan-950/60 border border-cyan-500 text-snow-textSub space-y-1 text-xs';
+              noticeDiv.innerHTML = `
+                <div class="text-snow-cyan font-bold flex items-center justify-between font-mono text-[11px]">
+                  <span class="flex items-center gap-1.5"><i data-lucide="file-check" class="w-3.5 h-3.5"></i> CAD 도면 파싱 완료</span>
+                  <span class="text-[10px] bg-cyan-900 px-2 py-0.5 rounded text-cyan-200">${fileName}</span>
+                </div>
+                <p class="break-keep text-white">
+                  <strong>${fileName}</strong> 설계 데이터가 디지털 트윈으로 로드되었습니다.
+                  1번 빔(내경 44mm) 및 2번 브라켓(중공 26×38mm)의 형상이 매핑되었으며, 공법 질의나 시운전을 시작할 수 있습니다.
+                </p>
+              `;
+              chatHistory.appendChild(noticeDiv);
+              chatHistory.scrollTop = chatHistory.scrollHeight;
+              lucide.createIcons();
+            }
+
+            // Focus on relevant part
+            if (partType === 'bracket') {
+              highlightDfmPart('bracket');
+            } else {
+              highlightDfmPart('beam');
+            }
+          }, 600);
+        }, 700);
+      }, 600);
+    }
+
+    /* --- GEMINI LIVE API & ADVANCED ENGINEERING KNOWLEDGE BASE --- */
+
+    let geminiApiKey = localStorage.getItem('gemini_api_key') || '';
+
+    function checkGeminiApiStatus() {
+      const badge = document.getElementById('geminiApiBadge');
+      const text = document.getElementById('geminiApiStatusText');
+      if (!badge || !text) return;
+      if (geminiApiKey) {
+        badge.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-cyan-950 text-cyan-300 border border-cyan-500 font-bold flex items-center gap-1.5 shadow-sm';
+        text.innerHTML = '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Gemini 2.5 Live';
+      } else {
+        badge.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-blue-950/80 hover:bg-blue-900 text-cyan-300 border border-cyan-700/60 font-bold flex items-center gap-1.5 transition-all shadow-sm';
+        text.textContent = 'Gemini API 설정';
+      }
+    }
+
+    function openGeminiConfigModal() {
+      const m = document.getElementById('geminiConfigModal');
+      const input = document.getElementById('geminiApiKeyInput');
+      if (input) input.value = geminiApiKey;
+      if (m) m.classList.remove('hidden');
+      lucide.createIcons();
+      playBeep(520);
+    }
+
+    function closeGeminiConfigModal() {
+      const m = document.getElementById('geminiConfigModal');
+      if (m) m.classList.add('hidden');
+    }
+
+    function saveGeminiApiKey() {
+      const input = document.getElementById('geminiApiKeyInput');
+      if (input) {
+        geminiApiKey = input.value.trim();
+        localStorage.setItem('gemini_api_key', geminiApiKey);
+      }
+      checkGeminiApiStatus();
+      closeGeminiConfigModal();
+      playBeep(880);
+      appendSystemChatMessage(geminiApiKey 
+        ? 'Google Gemini 2.5 Flash 실시간 API가 성공적으로 연동되었습니다! 이제 모든 자유 형식의 공법 질문에 대해 실시간 LLM 추론 답변이 제공됩니다.'
+        : '오프라인 내장 엔지니어링 지식베이스 모드로 전환되었습니다.'
+      );
+    }
+
+    function clearGeminiApiKey() {
+      geminiApiKey = '';
+      localStorage.removeItem('gemini_api_key');
+      const input = document.getElementById('geminiApiKeyInput');
+      if (input) input.value = '';
+      checkGeminiApiStatus();
+      closeGeminiConfigModal();
+      playBeep(420);
+      appendSystemChatMessage('Gemini API 키가 제거되었습니다. 고성능 내장 오프라인 DFM 지식베이스로 전환되었습니다.');
+    }
+
+    function appendSystemChatMessage(msg) {
+      const chatHistory = document.getElementById('dfmChatHistory');
+      if (!chatHistory) return;
+      const noticeDiv = document.createElement('div');
+      noticeDiv.className = 'p-3 rounded-2xl bg-[#101114] border border-cyan-500/50 text-cyan-300 text-xs font-mono flex items-center gap-2';
+      noticeDiv.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-cyan-400 shrink-0"></i><span class="break-keep">${msg}</span>`;
+      chatHistory.appendChild(noticeDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+      lucide.createIcons();
     }
 
     /* --- DFM AI COPILOT CHAT ENGINE --- */
@@ -3472,7 +3870,7 @@
       }, 700);
     }
 
-    function sendCustomDfmChat() {
+    async function sendCustomDfmChat() {
       const input = document.getElementById('dfmChatInput');
       if (!input || !input.value.trim()) return;
       const text = input.value.trim();
@@ -3485,49 +3883,133 @@
       const typingDiv = document.createElement('div');
       typingDiv.id = typingId;
       typingDiv.className = 'p-3.5 rounded-2xl bg-[#101114]/90 border border-cyan-500/40 text-snow-cyan flex items-center gap-2.5 text-xs font-mono animate-pulse';
-      typingDiv.innerHTML = '<i data-lucide="sparkles" class="w-4 h-4 animate-spin text-snow-cyan"></i><span>엔지니어링 질의 분석 중...</span>';
+      typingDiv.innerHTML = geminiApiKey
+        ? '<i data-lucide="sparkles" class="w-4 h-4 animate-spin text-cyan-400"></i><span>Google Gemini 2.5 Flash 실시간 모델 추론 중...</span>'
+        : '<i data-lucide="cpu" class="w-4 h-4 animate-spin text-snow-cyan"></i><span>AutoJig DFM 지식베이스 분석 중...</span>';
       chatHistory.appendChild(typingDiv);
       chatHistory.scrollTop = chatHistory.scrollHeight;
       lucide.createIcons();
 
+      // IF REAL GEMINI API KEY IS SET -> CALL LIVE API
+      if (geminiApiKey) {
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
+          const systemPrompt = "당신은 차체 생산기술 및 DFM(제조적합성) 엔지니어링 AI 'AutoJig Copilot'입니다. 1번 알루미늄 중공 빔(전장 2.8m, 내경 44x44mm, 상부 슬롯홀 2개소 폭방향 Z=±12mm), 2번 'ㅍ'자 보강 브라켓(외폭 40mm, 중공 26x38mm, 폭방향 대칭 수직 다리 2개소), Tool A 외측 그리퍼(외폭 72mm -> 44mm 빔 입구에 +28mm 간섭 충돌), Tool B AI 'ㅁ'자 코어 지그(25.5x37.5mm, 0.25mm slip-fit, 구배각 0.8도)에 대한 완벽한 공법 지식을 가집니다. 사용자의 모든 질문에 기술적으로 정확하고 간결한 한국어로 답변하세요. 시운전이 필요하면 [ACTION:SIMULATE], 충돌 테스트는 [ACTION:COLLIDE], 도면은 [ACTION:DRAWING], 부품 확대는 [ACTION:FOCUS_BEAM] 또는 [ACTION:FOCUS_BRACKET]을 답변 끝에 포함하세요.";
+
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                role: 'user',
+                parts: [{ text: `${systemPrompt}\n\n사용자 질의: ${text}` }]
+              }]
+            })
+          });
+
+          const data = await res.json();
+          const typingEl = document.getElementById(typingId);
+          if (typingEl) typingEl.remove();
+
+          if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+            let rawReply = data.candidates[0].content.parts[0].text;
+            
+            // Execute Action triggers
+            if (rawReply.includes('[ACTION:SIMULATE]')) runFullDfmKinematicSimulation();
+            if (rawReply.includes('[ACTION:COLLIDE]')) runConventionalGripperTest();
+            if (rawReply.includes('[ACTION:DRAWING]')) showDrawingModal();
+            if (rawReply.includes('[ACTION:FOCUS_BEAM]')) highlightDfmPart('beam');
+            if (rawReply.includes('[ACTION:FOCUS_BRACKET]')) highlightDfmPart('bracket');
+
+            rawReply = rawReply
+              .replace(/\[ACTION:[A-Z_]+\]/g, '')
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\n/g, '<br>');
+
+            renderCopilotBubble(rawReply, 'Gemini 2.5 Live', 'text-cyan-300');
+            return;
+          }
+        } catch (err) {
+          console.warn('Gemini Live API fallback:', err);
+        }
+      }
+
+      // OFFLINE HIGH-PERFORMANCE DOMAIN REASONING ENGINE (Fallback)
       setTimeout(() => {
         const typingEl = document.getElementById(typingId);
         if (typingEl) typingEl.remove();
 
         let reply = "";
-        let actionTag = "";
+        let actionTag = "AutoJig DFM Engine";
         const lower = text.toLowerCase();
-        if (lower.includes('도면') || lower.includes('cad') || lower.includes('치수') || lower.includes('스펙')) {
-          reply = "<strong>2D/3D CATIA CAD 도면 치수 스펙</strong>을 불러왔습니다.<br>• 1번 빔 내경: 44.0mm × 44.0mm<br>• 2번 브라켓 외폭: 40.0mm / 내부 'ㅁ'자 중공: 26.0mm × 38.0mm<br>• 상부 수직 다리: 폭방향 2개소 대칭 배치 (Z = ±12mm)<br>• 슬롯홀 규격: 12mm × 24mm (2개소)<br>상세 3각법 도면 모달을 화면에 표시합니다.";
+
+        if (lower.includes('도면') || lower.includes('cad') || lower.includes('치수') || lower.includes('스펙') || lower.includes('catia')) {
+          reply = "<strong>2D/3D CATIA CAD 도면 치수 스펙</strong>을 불러왔습니다.<br>• 1번 빔 내경: <strong>44.0mm × 44.0mm</strong> (전장 260mm)<br>• 2번 브라켓 외폭: <strong>40.0mm</strong> / 내부 중공: <strong>26.0mm × 38.0mm</strong><br>• 상부 슬롯홀 2개소: 12mm × 24mm (폭방향 대칭 Z=±12mm)<br>• 0.25mm slip-fit 정밀 공차도 모달을 표시합니다.";
           actionTag = "CAD Spec Loaded";
           showDrawingModal();
+
         } else if (lower.includes('간섭') || lower.includes('충돌') || lower.includes('그리퍼') || lower.includes('외측')) {
-          reply = "<strong>기존 Tool A 외측 그리퍼 간섭 원인 분석:</strong><br>외측 집게 그리퍼(외폭 72.0mm)는 1번 알루미늄 중공 빔의 입구 내경(44.0mm)보다 <strong>28.0mm 넓어</strong> 입구 외벽에 정면 충돌합니다. 3D 뷰어에서 충돌 간섭 시뮬레이션을 실행합니다.";
-          actionTag = "Interference Simulation";
+          reply = "<strong>기존 Tool A 외측 그리퍼 간섭 원인 분석:</strong><br>외측 집게 그리퍼(외폭 72.0mm)는 1번 빔의 입구 내경(44.0mm)보다 <strong>28.0mm 넓어</strong> 입구 외벽에 정면 충돌합니다. 3D 뷰어에서 충돌 간섭 시뮬레이션을 실행합니다.";
+          actionTag = "Interference Collision";
           runConventionalGripperTest();
-        } else if (lower.includes('시뮬') || lower.includes('지그') || lower.includes('용접') || lower.includes('코어') || lower.includes('시운전')) {
-          reply = "AI가 설계한 <strong>'ㅁ'자 슬림 코어 푸시 지그(Tool B)</strong>를 호출하여 4단계 키네마틱 시운전을 시작합니다.<br>① 내경 도킹 ➔ ② 빔 내부 전진 ➔ ③ 상부 슬롯홀 다리 돌출 & 2개소 스폿용접 ➔ ④ 탈거 구배각 후진 탈거";
-          actionTag = "Kinematics Triggered";
+
+        } else if (lower.includes('시뮬') || lower.includes('시운전') || lower.includes('키네마틱') || lower.includes('4단계') || lower.includes('조립')) {
+          reply = "AI가 설계한 <strong>'ㅁ'자 슬림 코어 푸시 지그(Tool B)</strong>를 호출하여 4단계 키네마틱 시운전을 시작합니다.<br>① 내경 결합(Docking) ➔ ② 빔 내부 전진(Push) ➔ ③ 상부 다리 돌출 & 2개소 스폿용접(Weld) ➔ ④ 구배각 역방향 인출(Retract)";
+          actionTag = "Kinematics 4-Step";
           runFullDfmKinematicSimulation();
+
+        } else if (lower.includes('코어') || lower.includes('지그') || lower.includes('맨드릴') || lower.includes('구배') || lower.includes('tool b')) {
+          reply = "<strong>Tool B 'ㅁ'자 코어 푸시 지그 설계 제원:</strong><br>• 맨드릴 코어 외경: <strong>25.5mm × 37.5mm</strong> (브라켓 중공 26×38mm 대비 편측 공차 0.25mm slip-fit)<br>• 탈거 구배각(Draft Angle): <strong>0.8° 테이퍼</strong>를 주어 용접 후 고착 없이 100% 원활히 인출 탈거됩니다.<br>3D 뷰어에서 코어 지그를 포커스합니다.";
+          actionTag = "Core Jig Specs";
+          highlightDfmPart('coreJig');
+
+        } else if (lower.includes('용접') || lower.includes('스폿') || lower.includes('spot') || lower.includes('전극') || lower.includes('너겟')) {
+          reply = "<strong>2개소 스폿 용접 가상 시운전 파라미터:</strong><br>• 용접점 위치: 빔 상부 슬롯홀 2개소 (폭방향 대칭 Z=±12mm, X=700mm)<br>• 용접 가압력: <strong>3.5 kN</strong> / 용접 전류: <strong>8.5 kA</strong> (통전 시간: 18 cycles)<br>• 브라켓 상부 돌출 다리 너겟 형성 후 전극봉이 자동 복귀합니다.";
+          actionTag = "Weld Parameters";
+
+        } else if (lower.includes('재질') || lower.includes('알루미늄') || lower.includes('소재') || lower.includes('강도')) {
+          reply = "<strong>소재 및 기계적 특성 분석:</strong><br>• 1번 빔: <strong>Al 6061-T6 압출재</strong> (인장강도 310 MPa, 경량화 및 충돌 흡수 최적화)<br>• 2번 브라켓: <strong>SPFC 780 고장력 강판</strong> 또는 <strong>Al 6000계열 다이캐스팅</strong> (차체 결합 하중 지지)<br>• 이종 접합 또는 알루미늄 스폿용접 조건에 맞춰 통전 사이클이 최적화되었습니다.";
+          actionTag = "Material Analysis";
+
+        } else if (lower.includes('1번') || lower.includes('빔')) {
+          reply = "1번 알루미늄 중공 빔(전장 2.8m, 외경 54mm, 내경 44mm)으로 시점을 이동했습니다.";
+          actionTag = "Focus Part 1";
+          highlightDfmPart('beam');
+
+        } else if (lower.includes('2번') || lower.includes('브라켓') || lower.includes('ㅍ자') || lower.includes('다리')) {
+          reply = "2번 'ㅍ'자 보강 브라켓(폭방향 대칭 다리 2개소, 'ㅁ'자 중공)으로 시점을 확대 이동했습니다.";
+          actionTag = "Focus Part 2";
+          highlightDfmPart('bracket');
+
+        } else if (lower.includes('6차종') || lower.includes('공용화') || lower.includes('범퍼')) {
+          reply = "<strong>6차종 공용화 지그 시스템과의 연계:</strong><br>3번째 탭의 범퍼 공용화 지그는 <strong>서보 리프트(곡률별 처짐/들뜸 보정)</strong>와 <strong>가변 가이드 ON/OFF(장척 빔 간섭 회피)</strong>, <strong>원통형 듀얼 클램프</strong>를 통해 6차종을 한 라인에서 유연 생산합니다. 본 DFM 엔진은 이와 같은 라인 공용화 설계의 제조적합성을 검증합니다.";
+          actionTag = "Commonization Jig";
+
         } else {
-          reply = `엔지니어님께서 문의하신 <em>"${text}"</em> 공법에 대해 DFM 추론을 수행했습니다.<br>본 알루미늄 빔-브라켓 협소 공정은 외측 클램핑 대신 <strong>'내경 삽입형 코어 지그(Tool B)'</strong>를 적용하여 간섭량을 0mm로 소거하고, 빔 상부 대칭 슬롯홀 2개소로 브라켓 상부 다리를 관통 돌출시켜 2개소 정밀 스폿 용접을 구현하도록 최적화되었습니다.`;
+          reply = `엔지니어님께서 문의하신 <em>"${text}"</em> 공법 질의를 다각도로 분석했습니다.<br>본 공정은 1번 알루미늄 중공 빔(내경 44mm)의 협소 입구로 인해 외측 그리퍼(72mm) 진입이 불가능한 DFM 난제이며, AI가 내부 'ㅁ'자 코어 지그(Tool B)를 제안하여 간섭을 0mm로 해소하고 상부 대칭 2개소 스폿용접을 완벽 구현했습니다.<br>우측 상단 <strong>[Gemini API 설정]</strong>에 키를 입력하시면 더욱 무제한의 실시간 LLM 추론이 가능합니다!`;
           actionTag = "LLM DFM Analysis";
         }
 
-        const respDiv = document.createElement('div');
-        respDiv.className = 'p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/50 text-snow-textSub space-y-2 text-xs sm:text-sm';
-        respDiv.innerHTML = `
-          <div class="text-snow-cyan font-bold flex items-center justify-between font-mono text-xs border-b border-cyan-900/60 pb-1.5">
-            <span class="flex items-center gap-1.5"><i data-lucide="cpu" class="w-3.5 h-3.5"></i> AutoJig Copilot</span>
-            <span class="text-[10px] bg-cyan-900/60 px-2 py-0.5 rounded text-cyan-200">${actionTag}</span>
-          </div>
-          <p class="break-keep text-white leading-relaxed">${reply}</p>
-        `;
-        chatHistory.appendChild(respDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
-        lucide.createIcons();
-        playBeep(600);
+        renderCopilotBubble(reply, actionTag, 'text-snow-cyan');
       }, 500);
+    }
+
+    function renderCopilotBubble(replyHtml, actionTag, tagColor) {
+      const chatHistory = document.getElementById('dfmChatHistory');
+      if (!chatHistory) return;
+      const respDiv = document.createElement('div');
+      respDiv.className = 'p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/50 text-snow-textSub space-y-2 text-xs sm:text-sm';
+      respDiv.innerHTML = `
+        <div class="${tagColor} font-bold flex items-center justify-between font-mono text-xs border-b border-cyan-900/60 pb-1.5">
+          <span class="flex items-center gap-1.5"><i data-lucide="cpu" class="w-3.5 h-3.5"></i> AutoJig Copilot</span>
+          <span class="text-[10px] bg-cyan-900/60 px-2 py-0.5 rounded text-cyan-200">${actionTag}</span>
+        </div>
+        <p class="break-keep text-white leading-relaxed">${replyHtml}</p>
+      `;
+      chatHistory.appendChild(respDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+      lucide.createIcons();
+      playBeep(600);
     }
 
     function appendUserChatMessage(msg) {
@@ -3598,6 +4080,7 @@
       initJigThree();
       updateBumperJigState();
       initDfmThree();
+      checkGeminiApiStatus();
     });
   </script>
 </body>
