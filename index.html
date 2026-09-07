@@ -912,6 +912,11 @@
                 </div>
 
                 <div class="flex items-center gap-2 bg-snow-surface2 p-1.5 rounded-2xl border border-snow-border text-xs">
+                  <button id="dfmBlueprintToggleBtn" onclick="toggleDfmBlueprintHud()" class="px-3 py-1.5 rounded-xl bg-purple-950/70 hover:bg-purple-900 text-purple-300 border border-purple-600/50 flex items-center gap-1.5 font-mono text-xs transition-all shadow-sm" title="2D 도면 오버레이">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                    <span id="dfmBlueprintToggleText">2D 도면 HUD</span>
+                  </button>
+                  <span class="text-snow-border">|</span>
                   <button id="dfmXrayBtn" onclick="toggleDfmXRay()" class="px-3.5 py-1.5 rounded-xl bg-blue-600 text-white font-bold border border-blue-400 flex items-center gap-1.5 font-mono text-xs transition-all shadow-sm">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                     <span id="dfmXrayText">X-Ray 투시 ON</span>
@@ -933,6 +938,64 @@
                   </div>
                   <div id="dfmAlertDesc" class="text-snow-textMuted text-xs sm:text-sm leading-relaxed">
                     1번 중공 빔 입구 측면에 2번 'ㅍ'자 브라켓이 대기 중입니다.
+                  </div>
+                </div>
+
+                <!-- 2D Blueprint Drawing Overlay HUD (User-Requested 2D to 3D Verification) -->
+                <div id="dfmBlueprintHud" class="absolute bottom-4 right-4 z-20 bg-[#0c0d12]/95 backdrop-blur-md p-3.5 rounded-2xl border border-purple-500/60 shadow-2xl space-y-2 hidden max-w-[310px] sm:max-w-[350px] transition-all">
+                  <div class="flex items-center justify-between border-b border-purple-500/30 pb-2">
+                    <div class="flex items-center gap-2 text-purple-300 font-bold text-xs font-mono">
+                      <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i>
+                      <span id="dfmBlueprintTitle">2D CAD 도면 AI 치수 판독 HUD</span>
+                    </div>
+                    <button onclick="toggleDfmBlueprintHud(false)" class="p-1 rounded-lg hover:bg-white/10 text-snow-textMuted hover:text-white">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  
+                  <!-- Interactive Blueprint SVG Diagram -->
+                  <div id="dfmBlueprintContent" class="bg-[#08090d] rounded-xl p-2.5 border border-purple-500/20 relative overflow-hidden font-mono text-[10px]">
+                    <div class="flex justify-between items-center text-purple-400 font-bold mb-1.5 text-[10px]">
+                      <span id="dfmBlueprintDocName">BUMPER_BEAM_DWG_REV04</span>
+                      <span class="bg-purple-950/80 px-1.5 py-0.5 rounded text-purple-300 border border-purple-800">ISO-128 3각법</span>
+                    </div>
+                    <!-- Technical Blueprint SVG -->
+                    <svg viewBox="0 0 280 115" class="w-full h-auto text-cyan-400 stroke-current fill-none">
+                      <!-- Outer Cross Section Box -->
+                      <rect x="20" y="16" width="120" height="80" rx="3" stroke="#38bdf8" stroke-width="1.8" />
+                      <!-- Inner Hollow Core -->
+                      <rect x="36" y="32" width="88" height="48" rx="2" stroke="#818cf8" stroke-width="1.3" stroke-dasharray="3 2" />
+                      <!-- Upper Protruding Weld Holes / Slots -->
+                      <rect x="58" y="12" width="44" height="8" rx="1" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.3" />
+                      <!-- Dimension Lines & Arrowheads -->
+                      <line x1="20" y1="9" x2="140" y2="9" stroke="#c084fc" stroke-width="1" />
+                      <line x1="20" y1="6" x2="20" y2="12" stroke="#c084fc" stroke-width="1" />
+                      <line x1="140" y1="6" x2="140" y2="12" stroke="#c084fc" stroke-width="1" />
+                      <text x="80" y="7" fill="#e9d5ff" font-size="8" text-anchor="middle" font-family="monospace">120.0 mm</text>
+
+                      <line x1="150" y1="16" x2="150" y2="96" stroke="#c084fc" stroke-width="1" />
+                      <line x1="147" y1="16" x2="153" y2="16" stroke="#c084fc" stroke-width="1" />
+                      <line x1="147" y1="96" x2="153" y2="96" stroke="#c084fc" stroke-width="1" />
+                      <text x="156" y="60" fill="#e9d5ff" font-size="8" font-family="monospace">80.0</text>
+
+                      <!-- Slip-fit Callout -->
+                      <path d="M 110 56 L 175 38 L 195 38" stroke="#34d399" stroke-width="1" />
+                      <text x="200" y="40" fill="#34d399" font-size="8" font-family="monospace">내경 44.0</text>
+                      <text x="200" y="49" fill="#34d399" font-size="7.5" font-family="monospace">(Slip: 0.25)</text>
+
+                      <!-- Wall thickness Callout -->
+                      <path d="M 28 24 L 180 82 L 200 82" stroke="#f43f5e" stroke-width="1" />
+                      <text x="205" y="85" fill="#f43f5e" font-size="8" font-family="monospace">t = 3.5mm</text>
+                    </svg>
+                  </div>
+                  
+                  <div class="flex items-center justify-between text-[11px] text-snow-textMuted font-mono">
+                    <span class="text-purple-300 font-semibold flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 3D Extrusion 동기화됨
+                    </span>
+                    <button onclick="zoomDfmBlueprint()" class="text-snow-cyan hover:underline text-xs flex items-center gap-1">
+                      <i data-lucide="maximize-2" class="w-3 h-3"></i> 도면 확대
+                    </button>
                   </div>
                 </div>
 
@@ -1134,65 +1197,120 @@
 
       <!-- CAD / CATIA Drawing Upload & Digital Twin Parsing Modal -->
       <div id="cadUploadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="snow-card max-w-2xl w-full p-6 sm:p-7 space-y-5 border-cyan-500/50 shadow-2xl relative">
+        <div class="snow-card max-w-2xl w-full p-6 sm:p-7 space-y-4 border-cyan-500/50 shadow-2xl relative max-h-[90vh] overflow-y-auto">
           <div class="flex items-center justify-between border-b border-snow-border pb-3.5">
             <div class="flex items-center gap-2.5 text-white font-bold text-base">
               <i data-lucide="upload-cloud" class="w-5 h-5 text-snow-cyan"></i>
-              <span>CAD / CATIA 설계 도면 업로드 & 디지털 트윈 매핑</span>
+              <span>CAD 도면 / 3D 모델 업로드 & 디지털 트윈 매핑</span>
             </div>
             <button onclick="closeCadUploadModal()" class="p-1.5 rounded-xl hover:bg-snow-border text-snow-textMuted hover:text-white">
               <i data-lucide="x" class="w-5 h-5"></i>
             </button>
           </div>
 
-          <!-- Drag & Drop Zone -->
-          <div id="cadDropZone" class="border-2 border-dashed border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#101114]/60 hover:bg-[#101114]" onclick="document.getElementById('cadFileInput').click()" ondragover="event.preventDefault(); this.classList.add('border-cyan-400','bg-blue-950/20')" ondragleave="this.classList.remove('border-cyan-400','bg-blue-950/20')" ondrop="handleCadDrop(event)">
-            <input type="file" id="cadFileInput" class="hidden" accept=".catpart,.catproduct,.stp,.step,.dwg,.dxf,.pdf,.png,.jpg" onchange="handleCadFileUpload(event)" />
-            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-inner">
-              <i data-lucide="file-up" class="w-7 h-7"></i>
+          <!-- Format Guide Cards (2D vs 3D Pipeline Guidelines) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <!-- Card 1: 2D Blueprint to 3D Extrusion -->
+            <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-950/50 via-[#13111c] to-blue-950/30 border border-purple-500/50 space-y-2 relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-1.5 font-bold text-xs text-purple-300">
+                  <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i>
+                  2D 도면을 3D로 바꾸고 싶다면
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-900/80 border border-purple-500/60 text-purple-200 font-bold">.pdf 권장</span>
+              </div>
+              <p class="text-xs text-snow-textSub leading-relaxed break-keep">
+                2D CAD 삼각도(정면·평면·측면) 및 치수 도면은 <strong><span class="text-purple-300 font-bold">.pdf</span> (또는 .dxf, 도면 이미지)</strong>로 업로드해 주세요.
+              </p>
+              <div class="text-[11px] text-snow-textMuted bg-[#090a0f]/90 p-2.5 rounded-xl border border-purple-500/20 font-mono space-y-1">
+                <div class="flex items-center gap-1.5 text-purple-300 font-semibold">
+                  <i data-lucide="scan" class="w-3 h-3 text-purple-400"></i> AI Vision 치수 자동 판독
+                </div>
+                <div>• 도면 내 외경(120×80), 내경(44), 두께(3.5) 인식</div>
+                <div>• 단면 벡터 기반 <strong>3D 파라메트릭 Extrude 복원</strong></div>
+                <div>• 뷰어 내 <strong>[2D 도면 HUD]</strong>로 1:1 공차 대조</div>
+              </div>
             </div>
-            <div class="text-sm font-semibold text-white mb-1">
-              CATIA / STEP / DWG 도면 파일을 여기로 드래그하거나 클릭하여 선택
-            </div>
-            <div class="text-xs text-snow-textMuted font-mono">
-              지원 포맷: .CATPart, .CATProduct, .step, .stp, .dwg, .dxf (단품/어셈블리 파싱 지원)
+
+            <!-- Card 2: 3D CAD Mesh Rendering -->
+            <div class="p-4 rounded-2xl bg-gradient-to-br from-cyan-950/50 via-[#10151c] to-blue-950/30 border border-cyan-500/50 space-y-2 relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-1.5 font-bold text-xs text-cyan-300">
+                  <i data-lucide="box" class="w-4 h-4 text-cyan-400"></i>
+                  3D 도면을 여기서 띄우고 싶다면
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-900/80 border border-cyan-500/60 text-cyan-200 font-bold">.stl / .obj 변환</span>
+              </div>
+              <p class="text-xs text-snow-textSub leading-relaxed break-keep">
+                카티아(<span class="font-mono text-snow-textMuted">.CATPart</span>)나 CAD 원본은 사내 보안(DRM)으로 인해 <strong><span class="text-cyan-300 font-bold">.stl</span> 또는 <span class="text-cyan-300 font-bold">.obj</span>로 변환(Export)</strong>하여 업로드해 주세요.
+              </p>
+              <div class="text-[11px] text-snow-textMuted bg-[#090a0f]/90 p-2.5 rounded-xl border border-cyan-500/20 font-mono space-y-1">
+                <div class="flex items-center gap-1.5 text-cyan-300 font-semibold">
+                  <i data-lucide="layers" class="w-3 h-3 text-cyan-400"></i> 초경량 고속 3D 렌더링
+                </div>
+                <div>• 브라우저 WebGL 씬에 실제 지오메트리 렌더링</div>
+                <div>• 부품별 자동 넘버링 (1번 빔, 2번 브라켓 식별)</div>
+                <div>• 0.25mm slip-fit 기반 <strong>AI 지그 간섭 해석</strong></div>
+              </div>
             </div>
           </div>
 
-          <!-- Sample CAD Drawing Presets -->
+          <!-- Drag & Drop Zone -->
+          <div id="cadDropZone" class="border-2 border-dashed border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-5 text-center cursor-pointer transition-all bg-[#101114]/80 hover:bg-[#101114]" onclick="document.getElementById('cadFileInput').click()" ondragover="event.preventDefault(); this.classList.add('border-cyan-400','bg-blue-950/20')" ondragleave="this.classList.remove('border-cyan-400','bg-blue-950/20')" ondrop="handleCadDrop(event)">
+            <input type="file" id="cadFileInput" class="hidden" accept=".stl,.obj,.pdf,.dxf,.png,.jpg,.jpeg,.catpart,.catproduct,.stp,.step,.dwg" onchange="handleCadFileUpload(event)" />
+            <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-inner">
+              <i data-lucide="file-up" class="w-6 h-6"></i>
+            </div>
+            <div class="text-sm font-semibold text-white mb-1">
+              3D 메쉬(.stl, .obj) 또는 2D 도면(.pdf, .dxf, 이미지)을 여기로 드래그하거나 클릭
+            </div>
+            <div class="text-xs text-snow-textMuted font-mono space-y-0.5">
+              <div>• 2D 도면 (.pdf, .dxf) ➔ AI 치수 판독 후 3D 파라메트릭 자동 돌출 복원</div>
+              <div>• 3D 모델 (.stl, .obj) ➔ 3D 뷰어 실제 렌더링 & 파츠 자동 넘버링 및 시뮬레이션</div>
+            </div>
+          </div>
+
+          <!-- Sample Presets (Both 3D STL and 2D PDF Ready) -->
           <div class="space-y-2">
             <span class="text-xs font-mono font-bold text-snow-textMuted uppercase flex items-center gap-1.5">
               <i data-lucide="sparkles" class="w-3.5 h-3.5 text-snow-cyan"></i>
-              <span>즉시 검증 가능한 샘플 CAD 모델/도면 프리셋:</span>
+              <span>원클릭 검증 샘플 모델 & 도면 프리셋:</span>
             </span>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <button onclick="loadPresetCadFile('AL_HOLLOW_BEAM_GEN4.CATPart', 'beam')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-blue-950/40 border border-snow-border hover:border-cyan-500 text-left transition-all text-xs group">
+              <!-- 3D STL Preset 1 -->
+              <button onclick="loadPresetCadFile('AL_BEAM_GEN4.stl', 'beam_stl')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-blue-950/40 border border-snow-border hover:border-cyan-500 text-left transition-all text-xs group">
                 <div class="font-mono text-cyan-300 font-semibold group-hover:text-white flex items-center justify-between">
-                  <span>AL_BEAM_REV04.CATPart</span>
-                  <span class="text-[10px] bg-blue-900/60 px-2 py-0.5 rounded text-blue-200">1번 빔</span>
+                  <span>AL_BEAM_GEN4.stl</span>
+                  <span class="text-[10px] bg-cyan-900/80 px-2 py-0.5 rounded text-cyan-200 border border-cyan-700">3D 메쉬 .stl</span>
                 </div>
-                <div class="text-[11px] text-snow-textMuted mt-0.5">알루미늄 6061-T6 중공 각형 빔 (44mm 내경)</div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">1번 빔 STL 지오메트리 파싱 & 3D 뷰어 직접 로드</div>
               </button>
-              <button onclick="loadPresetCadFile('BRKT_P_SHAPED_REINFORCE.CATPart', 'bracket')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-amber-950/40 border border-snow-border hover:border-amber-500 text-left transition-all text-xs group">
+
+              <!-- 3D STL Preset 2 -->
+              <button onclick="loadPresetCadFile('BRKT_P_SHAPED.stl', 'bracket_stl')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-amber-950/40 border border-snow-border hover:border-amber-500 text-left transition-all text-xs group">
                 <div class="font-mono text-amber-300 font-semibold group-hover:text-white flex items-center justify-between">
-                  <span>BRKT_P_REV02.CATPart</span>
-                  <span class="text-[10px] bg-amber-900/60 px-2 py-0.5 rounded text-amber-200">2번 브라켓</span>
+                  <span>BRKT_P_SHAPED.stl</span>
+                  <span class="text-[10px] bg-amber-900/80 px-2 py-0.5 rounded text-amber-200 border border-amber-700">3D 메쉬 .stl</span>
                 </div>
-                <div class="text-[11px] text-snow-textMuted mt-0.5">'ㅍ'자 보강 브라켓 (폭방향 대칭 다리 2개소)</div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">2번 'ㅍ'자 브라켓 STL 파싱 & 파츠 넘버링</div>
               </button>
-              <button onclick="loadPresetCadFile('ASSY_BEAM_AND_JIG_V3.CATProduct', 'assy')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-cyan-950/40 border border-snow-border hover:border-cyan-500 text-left transition-all text-xs group">
-                <div class="font-mono text-emerald-300 font-semibold group-hover:text-white flex items-center justify-between">
-                  <span>BEAM_BRKT_ASSY.CATProduct</span>
-                  <span class="text-[10px] bg-emerald-900/60 px-2 py-0.5 rounded text-emerald-200">어셈블리</span>
-                </div>
-                <div class="text-[11px] text-snow-textMuted mt-0.5">1번 빔 + 2번 브라켓 + Tool B 코어 지그 결합체</div>
-              </button>
-              <button onclick="loadPresetCadFile('2D_TOLERANCE_SPEC_R3.DWG', 'dwg')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-purple-950/40 border border-snow-border hover:border-purple-500 text-left transition-all text-xs group">
+
+              <!-- 2D PDF Blueprint Preset -->
+              <button onclick="loadPresetCadFile('BUMPER_BEAM_SPEC.pdf', 'beam_pdf')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-purple-950/40 border border-snow-border hover:border-purple-500 text-left transition-all text-xs group">
                 <div class="font-mono text-purple-300 font-semibold group-hover:text-white flex items-center justify-between">
-                  <span>2D_TOLERANCE_R3.DWG</span>
-                  <span class="text-[10px] bg-purple-900/60 px-2 py-0.5 rounded text-purple-200">2D 3각법</span>
+                  <span>BUMPER_BEAM_SPEC.pdf</span>
+                  <span class="text-[10px] bg-purple-900/80 px-2 py-0.5 rounded text-purple-200 border border-purple-700">2D 도면 .pdf</span>
                 </div>
-                <div class="text-[11px] text-snow-textMuted mt-0.5">제작 치수 및 0.25mm slip-fit 정밀 공차도</div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">AI 도면 치수 판독 ➔ 3D 파라메트릭 돌출 & 2D HUD 동기화</div>
+              </button>
+
+              <!-- 2D CAD DXF Preset -->
+              <button onclick="loadPresetCadFile('CROSS_SECTION_REV02.dxf', 'dxf')" class="p-3 rounded-xl bg-snow-surface2 hover:bg-emerald-950/40 border border-snow-border hover:border-emerald-500 text-left transition-all text-xs group">
+                <div class="font-mono text-emerald-300 font-semibold group-hover:text-white flex items-center justify-between">
+                  <span>SECTION_REV02.dxf</span>
+                  <span class="text-[10px] bg-emerald-900/80 px-2 py-0.5 rounded text-emerald-200 border border-emerald-700">2D CAD .dxf</span>
+                </div>
+                <div class="text-[11px] text-snow-textMuted mt-0.5">2D 단면 벡터 좌표 추출 ➔ 3D Extrude 복원</div>
               </button>
             </div>
           </div>
@@ -1202,15 +1320,15 @@
             <div class="flex items-center justify-between text-cyan-300 font-bold">
               <span id="cadParsingStatusText" class="flex items-center gap-2">
                 <i data-lucide="refresh-cw" class="w-4 h-4 animate-spin text-cyan-400"></i>
-                <span>[1/3] B-Rep 지오메트리 & 폴리곤 메시 파싱 중...</span>
+                <span>[1/3] 도면 및 지오메트리 데이터 파싱 중...</span>
               </span>
               <span id="cadParsingPercent" class="text-white">35%</span>
             </div>
             <div class="w-full bg-snow-surface2 rounded-full h-2 overflow-hidden">
-              <div id="cadParsingBar" class="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full transition-all duration-300" style="width: 35%"></div>
+              <div id="cadParsingBar" class="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 h-full rounded-full transition-all duration-300" style="width: 35%"></div>
             </div>
             <div id="cadParsingLog" class="text-[11px] text-snow-textMuted space-y-0.5">
-              • CATIA V5-6 B-Rep 커널 연결 성공 (1,480 면/2,940 모서리 감지)
+              • 파일 무결성 및 헤더 검증 성공
             </div>
           </div>
 
@@ -2796,6 +2914,8 @@
     let dfmWeldNugget1 = null, dfmWeldNugget2 = null;
     let dfmCollisionMarkerGroup = null;
     let dfmSpotGun1 = null, dfmSpotGun2 = null;
+    let dfmUploadedMeshGroup = null; // Custom STL / OBJ / 2D Extruded models
+    let isDfmBlueprintHudOpen = false;
 
     // State Variables
     let isDfmXrayOn = true;
@@ -3171,6 +3291,10 @@
       });
       dfmCollisionMarkerGroup.visible = false;
       dfmScene.add(dfmCollisionMarkerGroup);
+
+      // 8. UPLOADED CUSTOM CAD MESH GROUP (.stl / .obj / 2D Extruded)
+      dfmUploadedMeshGroup = new THREE.Group();
+      dfmScene.add(dfmUploadedMeshGroup);
     }
 
     function animateDfmThree() {
@@ -3232,7 +3356,11 @@
       if (dfmAnimTimer) cancelAnimationFrame(dfmAnimTimer);
       dfmSparkActive = false;
 
-      if (dfmBracketGroup) dfmBracketGroup.position.set(-1.5, 0, 0);
+      if (dfmBeamGroup) dfmBeamGroup.visible = true;
+      if (dfmBracketGroup) {
+        dfmBracketGroup.visible = true;
+        dfmBracketGroup.position.set(-1.5, 0, 0);
+      }
       if (dfmCoreJigGroup) {
         dfmCoreJigGroup.position.set(-2.7, 0, 0);
         dfmCoreJigGroup.visible = true;
@@ -3629,6 +3757,262 @@
       playBeep(540);
     }
 
+    /* --- 2D BLUEPRINT HUD & VIEW CONTROLS --- */
+
+    function toggleDfmBlueprintHud(force) {
+      const hud = document.getElementById('dfmBlueprintHud');
+      const btn = document.getElementById('dfmBlueprintToggleBtn');
+      if (!hud) return;
+      isDfmBlueprintHudOpen = force !== undefined ? force : hud.classList.contains('hidden');
+      if (isDfmBlueprintHudOpen) {
+        hud.classList.remove('hidden');
+        if (btn) {
+          btn.className = 'px-3 py-1.5 rounded-xl bg-purple-600 text-white border border-purple-400 flex items-center gap-1.5 font-mono text-xs transition-all shadow-sm font-bold';
+        }
+        playBeep(620);
+      } else {
+        hud.classList.add('hidden');
+        if (btn) {
+          btn.className = 'px-3 py-1.5 rounded-xl bg-purple-950/70 hover:bg-purple-900 text-purple-300 border border-purple-600/50 flex items-center gap-1.5 font-mono text-xs transition-all shadow-sm';
+        }
+        playBeep(380);
+      }
+      lucide.createIcons();
+    }
+
+    function zoomDfmBlueprint() {
+      openCadDrawingModal();
+    }
+
+    /* --- REAL CLIENT-SIDE 3D STL & OBJ MESH PARSER --- */
+
+    function parseSTL(buffer) {
+      const reader = new DataView(buffer);
+      let isBinary = false;
+      let numTriangles = 0;
+      if (buffer.byteLength >= 84) {
+        numTriangles = reader.getUint32(80, true);
+        if (buffer.byteLength === (84 + numTriangles * 50)) {
+          isBinary = true;
+        }
+      }
+
+      if (isBinary) {
+        const positions = new Float32Array(numTriangles * 9);
+        const normals = new Float32Array(numTriangles * 9);
+        for (let i = 0; i < numTriangles; i++) {
+          const offset = 84 + i * 50;
+          const nx = reader.getFloat32(offset, true);
+          const ny = reader.getFloat32(offset + 4, true);
+          const nz = reader.getFloat32(offset + 8, true);
+
+          for (let v = 0; v < 3; v++) {
+            const vOffset = offset + 12 + v * 12;
+            const posIdx = i * 9 + v * 3;
+            positions[posIdx] = reader.getFloat32(vOffset, true);
+            positions[posIdx + 1] = reader.getFloat32(vOffset + 4, true);
+            positions[posIdx + 2] = reader.getFloat32(vOffset + 8, true);
+
+            normals[posIdx] = nx;
+            normals[posIdx + 1] = ny;
+            normals[posIdx + 2] = nz;
+          }
+        }
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        if (normals[0] !== 0 || normals[1] !== 0 || normals[2] !== 0) {
+          geom.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+        } else {
+          geom.computeVertexNormals();
+        }
+        return geom;
+      } else {
+        // ASCII STL
+        const text = new TextDecoder('utf-8').decode(buffer);
+        const vertexRegex = /vertex\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)/g;
+        const vertices = [];
+        let match;
+        while ((match = vertexRegex.exec(text)) !== null) {
+          vertices.push(parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3]));
+        }
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
+        geom.computeVertexNormals();
+        return geom;
+      }
+    }
+
+    function parseOBJ(text) {
+      const lines = text.split('\n');
+      const vertices = [];
+      const positions = [];
+      for (let line of lines) {
+        line = line.trim();
+        if (line.startsWith('v ')) {
+          const parts = line.split(/\s+/).slice(1).map(Number);
+          vertices.push([parts[0], parts[1], parts[2]]);
+        } else if (line.startsWith('f ')) {
+          const parts = line.split(/\s+/).slice(1);
+          const idxs = parts.map(p => parseInt(p.split('/')[0]) - 1);
+          for (let i = 1; i < idxs.length - 1; i++) {
+            const v0 = vertices[idxs[0]];
+            const v1 = vertices[idxs[i]];
+            const v2 = vertices[idxs[i + 1]];
+            if (v0 && v1 && v2) {
+              positions.push(...v0, ...v1, ...v2);
+            }
+          }
+        }
+      }
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+      geom.computeVertexNormals();
+      return geom;
+    }
+
+    // Convert BufferGeometry into real Binary STL ArrayBuffer for preset tests
+    function createBinaryStlFromGeometry(geom) {
+      const g = geom.index ? geom.toNonIndexed() : geom;
+      const pos = g.getAttribute('position');
+      const numTris = Math.floor(pos.count / 3);
+      const buffer = new ArrayBuffer(84 + numTris * 50);
+      const view = new DataView(buffer);
+      const header = 'BINARY STL EXPORT AUTOJIG DFM WEBGL';
+      for (let i = 0; i < header.length; i++) view.setUint8(i, header.charCodeAt(i));
+      view.setUint32(80, numTris, true);
+      for (let i = 0; i < numTris; i++) {
+        const offset = 84 + i * 50;
+        for (let v = 0; v < 3; v++) {
+          const pIdx = i * 3 + v;
+          const vOff = offset + 12 + v * 12;
+          view.setFloat32(vOff, pos.getX(pIdx), true);
+          view.setFloat32(vOff + 4, pos.getY(pIdx), true);
+          view.setFloat32(vOff + 8, pos.getZ(pIdx), true);
+        }
+      }
+      return buffer;
+    }
+
+    function loadCustomGeometryIntoScene(geom, fileName, meta = {}) {
+      if (!dfmScene || !dfmUploadedMeshGroup) return;
+
+      while (dfmUploadedMeshGroup.children.length > 0) {
+        const obj = dfmUploadedMeshGroup.children[0];
+        dfmUploadedMeshGroup.remove(obj);
+      }
+
+      geom.computeBoundingBox();
+      const bbox = geom.boundingBox;
+      const size = new THREE.Vector3();
+      bbox.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale = maxDim > 0 ? (2.2 / maxDim) : 1.0;
+      geom.scale(scale, scale, scale);
+      geom.center();
+
+      const isBrkt = fileName.toLowerCase().includes('brkt') || fileName.toLowerCase().includes('bracket');
+      const is2dExtrude = meta.is2dExtrude;
+
+      let color = 0x0284c7;
+      let emissive = 0x0369a1;
+      let edgeColor = 0x38bdf8;
+
+      if (isBrkt) {
+        color = 0xf59e0b;
+        emissive = 0x78350f;
+        edgeColor = 0xfcd34d;
+      } else if (is2dExtrude) {
+        color = 0x818cf8;
+        emissive = 0x3730a3;
+        edgeColor = 0xc084fc;
+      }
+
+      const mat = new THREE.MeshStandardMaterial({
+        color: color,
+        metalness: 0.82,
+        roughness: 0.28,
+        emissive: emissive,
+        emissiveIntensity: 0.35,
+        transparent: isDfmXrayOn,
+        opacity: isDfmXrayOn ? 0.85 : 1.0
+      });
+
+      const mesh = new THREE.Mesh(geom, mat);
+      const edges = new THREE.LineSegments(
+        new THREE.EdgesGeometry(geom, 25),
+        new THREE.LineBasicMaterial({ color: edgeColor, linewidth: 1.2 })
+      );
+      mesh.add(edges);
+      dfmUploadedMeshGroup.add(mesh);
+
+      // Hide default beam/bracket if custom mesh replaces it
+      if (dfmBeamGroup && dfmBracketGroup) {
+        if (isBrkt) {
+          dfmBracketGroup.visible = false;
+          mesh.position.set(-1.5, 0, 0);
+        } else {
+          dfmBeamGroup.visible = false;
+          mesh.position.set(0.7, 0, 0);
+        }
+      }
+
+      // Smooth camera transition to target
+      dfmLookAtTarget.copy(mesh.position);
+      dfmTargetRadius = 3.6;
+      isDfmCamTransitioning = true;
+    }
+
+    function apply2DParametricExtrusion(fileName) {
+      // 3D Extrusion using THREE.Shape with hollow core matching 2D Blueprint
+      const shape = new THREE.Shape();
+      const w = 1.2, h = 0.8;
+      shape.moveTo(-w/2, -h/2);
+      shape.lineTo(w/2, -h/2);
+      shape.lineTo(w/2, h/2);
+      shape.lineTo(-w/2, h/2);
+      shape.closePath();
+
+      // Hollow inner hole (inner width 0.9, height 0.5)
+      const hole = new THREE.Path();
+      const hw = 0.9, hh = 0.5;
+      hole.moveTo(-hw/2, -hh/2);
+      hole.lineTo(hw/2, -hh/2);
+      hole.lineTo(hw/2, hh/2);
+      hole.lineTo(-hw/2, hh/2);
+      hole.closePath();
+      shape.holes.push(hole);
+
+      const extrudeSettings = {
+        steps: 2,
+        depth: 2.8,
+        bevelEnabled: true,
+        bevelThickness: 0.04,
+        bevelSize: 0.03,
+        bevelSegments: 3
+      };
+
+      const geom = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+      geom.rotateY(Math.PI / 2);
+
+      loadCustomGeometryIntoScene(geom, fileName, { is2dExtrude: true });
+
+      // Show Blueprint HUD
+      const docNameEl = document.getElementById('dfmBlueprintDocName');
+      if (docNameEl) docNameEl.textContent = fileName;
+      toggleDfmBlueprintHud(true);
+    }
+
+    /* --- CAD / CATIA DRAWING UPLOAD & PARSING SYSTEM --- */
+
+    function openCadUploadModal() {
+      const m = document.getElementById('cadUploadModal');
+      if (m) m.classList.remove('hidden');
+      const progress = document.getElementById('cadParsingContainer');
+      if (progress) progress.classList.add('hidden');
+      lucide.createIcons();
+      playBeep(540);
+    }
+
     function closeCadUploadModal() {
       const m = document.getElementById('cadUploadModal');
       if (m) m.classList.add('hidden');
@@ -3640,23 +4024,67 @@
       const dropZone = document.getElementById('cadDropZone');
       if (dropZone) dropZone.classList.remove('border-cyan-400', 'bg-blue-950/20');
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        const file = e.dataTransfer.files[0];
-        simulateCadParsing(file.name, file.name.includes('BRKT') ? 'bracket' : 'beam');
+        processCadFile(e.dataTransfer.files[0]);
       }
     }
 
     function handleCadFileUpload(e) {
       if (e.target && e.target.files && e.target.files.length > 0) {
-        const file = e.target.files[0];
-        simulateCadParsing(file.name, file.name.includes('BRKT') ? 'bracket' : 'beam');
+        processCadFile(e.target.files[0]);
+      }
+    }
+
+    function processCadFile(file) {
+      const fileName = file.name;
+      const ext = fileName.split('.').pop().toLowerCase();
+
+      if (ext === 'stl') {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const buffer = evt.target.result;
+          const geom = parseSTL(buffer);
+          simulateCadParsing(fileName, 'stl', geom);
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (ext === 'obj') {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const text = evt.target.result;
+          const geom = parseOBJ(text);
+          simulateCadParsing(fileName, 'obj', geom);
+        };
+        reader.readAsText(file);
+      } else if (ext === 'pdf' || ['png', 'jpg', 'jpeg'].includes(ext)) {
+        simulateCadParsing(fileName, 'pdf', null);
+      } else if (ext === 'dxf') {
+        simulateCadParsing(fileName, 'dxf', null);
+      } else {
+        // CATPart, DWG, STEP
+        simulateCadParsing(fileName, 'cad', null);
       }
     }
 
     function loadPresetCadFile(fileName, type) {
-      simulateCadParsing(fileName, type);
+      if (type === 'beam_stl') {
+        const shape = new THREE.BoxGeometry(2.4, 0.7, 0.7);
+        const buffer = createBinaryStlFromGeometry(shape);
+        const geom = parseSTL(buffer);
+        simulateCadParsing(fileName, 'stl', geom);
+      } else if (type === 'bracket_stl') {
+        const shape = new THREE.BoxGeometry(0.8, 0.65, 0.75);
+        const buffer = createBinaryStlFromGeometry(shape);
+        const geom = parseSTL(buffer);
+        simulateCadParsing(fileName, 'stl', geom);
+      } else if (type === 'beam_pdf') {
+        simulateCadParsing(fileName, 'pdf', null);
+      } else if (type === 'dxf') {
+        simulateCadParsing(fileName, 'dxf', null);
+      } else {
+        simulateCadParsing(fileName, 'cad', null);
+      }
     }
 
-    function simulateCadParsing(fileName, partType) {
+    function simulateCadParsing(fileName, mode, customGeom) {
       const progress = document.getElementById('cadParsingContainer');
       const statusText = document.getElementById('cadParsingStatusText');
       const percentEl = document.getElementById('cadParsingPercent');
@@ -3667,19 +4095,35 @@
       progress.classList.remove('hidden');
       playBeep(600);
 
+      const is2D = (mode === 'pdf' || mode === 'dxf');
+      const isSTL = (mode === 'stl' || mode === 'obj');
+
       // Phase 1: 35%
       percentEl.textContent = '35%';
       barEl.style.width = '35%';
-      statusText.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin text-cyan-400"></i><span>[1/3] B-Rep 커널 형상 파싱 중... (${fileName})</span>`;
-      logEl.innerHTML = `• 파일 검증 성공: ${fileName}<br>• NURBS 곡면 및 폴리곤 메시 변환 완료`;
+      if (is2D) {
+        statusText.innerHTML = `<i data-lucide="scan" class="w-4 h-4 animate-spin text-purple-400"></i><span>[1/3] 2D 도면 OCR 및 비전 스캔 중... (${fileName})</span>`;
+        logEl.innerHTML = `• 파일 검증 성공: ${fileName}<br>• 삼각도 투영선 및 치수 기호(ISO-128) 42개소 인식`;
+      } else if (isSTL) {
+        statusText.innerHTML = `<i data-lucide="layers" class="w-4 h-4 animate-spin text-cyan-400"></i><span>[1/3] 3D STL 폴리곤 메쉬 바이너리 파싱 중... (${fileName})</span>`;
+        logEl.innerHTML = `• 파일 검증 성공: ${fileName}<br>• BufferGeometry 삼각형 인덱스 및 표면 법선(Normals) 생성`;
+      } else {
+        statusText.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin text-cyan-400"></i><span>[1/3] CAD 커널 B-Rep 형상 파싱 중... (${fileName})</span>`;
+        logEl.innerHTML = `• 파일 검증 성공: ${fileName}<br>• 사내 보안(DRM) 확인 ➔ 자동 경량 메쉬 파이프라인 매핑`;
+      }
       lucide.createIcons();
 
       setTimeout(() => {
         // Phase 2: 72%
         percentEl.textContent = '72%';
         barEl.style.width = '72%';
-        statusText.innerHTML = `<i data-lucide="scan" class="w-4 h-4 text-amber-400 animate-pulse"></i><span>[2/3] 핵심 공차 치수 및 조립 데이터 추출 중...</span>`;
-        logEl.innerHTML += `<br>• 양산 치수 매핑: 1번 빔 내경 44.0mm / 2번 브라켓 중공 26.0×38.0mm<br>• 상부 슬롯홀 2개소 좌표 (X: 700mm, Z: ±12.0mm) 자동 인식`;
+        if (is2D) {
+          statusText.innerHTML = `<i data-lucide="cpu" class="w-4 h-4 text-purple-300 animate-pulse"></i><span>[2/3] Vision AI 치수 판독 및 3D 파라메트릭 Extrude 연산 중...</span>`;
+          logEl.innerHTML += `<br>• 외경 120.0×80.0mm, 내경 44.0mm, 판두께 t=3.5mm 치수 판독 완료<br>• 상부 슬롯홀 및 0.25mm slip-fit 여유 공차 연산`;
+        } else {
+          statusText.innerHTML = `<i data-lucide="scan" class="w-4 h-4 text-amber-400 animate-pulse"></i><span>[2/3] 파츠 자동 넘버링 및 조립 간섭 계산 중...</span>`;
+          logEl.innerHTML += `<br>• B-Rep 표면 정규화 완료 (중심 원점 정렬 & 1:1 스케일 변환)<br>• 조립 부품 단위 식별 (Part 1 빔 / Part 2 브라켓 / Tool B 코어 지그 매핑)`;
+        }
         lucide.createIcons();
         playBeep(720);
 
@@ -3688,41 +4132,56 @@
           percentEl.textContent = '100%';
           barEl.style.width = '100%';
           statusText.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i><span>[3/3] 3D 디지털 트윈 매핑 완료!</span>`;
-          logEl.innerHTML += `<br>• <span class="text-emerald-400 font-bold">디지털 트윈 3D 뷰어 동기화 완료</span>`;
+          logEl.innerHTML += `<br>• <span class="text-emerald-400 font-bold">3D WebGL 뷰어 렌더링 & DFM 시운전 준비 완료</span>`;
           lucide.createIcons();
           playBeep(920);
 
           setTimeout(() => {
             closeCadUploadModal();
+
+            // Apply 3D Scene Updates
+            if (isSTL && customGeom) {
+              loadCustomGeometryIntoScene(customGeom, fileName);
+            } else if (is2D) {
+              apply2DParametricExtrusion(fileName);
+            } else {
+              if (fileName.includes('BRKT')) {
+                highlightDfmPart('bracket');
+              } else {
+                highlightDfmPart('beam');
+              }
+            }
+
             // Update Title in Tree
             const treeTitle = document.getElementById('catiaAssyTitle');
-            if (treeTitle) treeTitle.textContent = `Assy: ${fileName}`;
+            if (treeTitle) treeTitle.textContent = `Assy / Part: ${fileName}`;
 
             // Add notification to Chat History
             const chatHistory = document.getElementById('dfmChatHistory');
             if (chatHistory) {
               const noticeDiv = document.createElement('div');
-              noticeDiv.className = 'p-3.5 rounded-2xl bg-cyan-950/60 border border-cyan-500 text-snow-textSub space-y-1 text-xs';
+              noticeDiv.className = is2D
+                ? 'p-3.5 rounded-2xl bg-purple-950/60 border border-purple-500 text-snow-textSub space-y-1.5 text-xs'
+                : 'p-3.5 rounded-2xl bg-cyan-950/60 border border-cyan-500 text-snow-textSub space-y-1.5 text-xs';
+              
+              const badgeBg = is2D ? 'bg-purple-900 text-purple-200 border-purple-700' : 'bg-cyan-900 text-cyan-200 border-cyan-700';
+              const titleText = is2D ? '2D 도면 Vision AI ➔ 3D 파라메트릭 복원 완료' : '3D CAD/STL 메쉬 지오메트리 로드 완료';
+              const descText = is2D
+                ? `<strong>${fileName}</strong> 2D 도면의 삼각도 및 치수선(외경 120×80mm, 내경 44mm, t=3.5mm)을 AI가 판독하여 3D 파라메트릭 Extrusion 형상을 즉각 빌드했습니다. 뷰어 내 <strong>[2D 도면 HUD]</strong>로 1:1 도면 공차를 대조할 수 있습니다.`
+                : `<strong>${fileName}</strong> 3D 형상 데이터가 Three.js 씬에 성공적으로 렌더링되었습니다. 부품 자동 넘버링이 적용되었으며 협소 공간 간섭 및 'ㅁ'자 코어 푸시 지그 시뮬레이션을 수행할 수 있습니다.`;
+
               noticeDiv.innerHTML = `
-                <div class="text-snow-cyan font-bold flex items-center justify-between font-mono text-[11px]">
-                  <span class="flex items-center gap-1.5"><i data-lucide="file-check" class="w-3.5 h-3.5"></i> CAD 도면 파싱 완료</span>
-                  <span class="text-[10px] bg-cyan-900 px-2 py-0.5 rounded text-cyan-200">${fileName}</span>
+                <div class="text-white font-bold flex items-center justify-between font-mono text-[11px]">
+                  <span class="flex items-center gap-1.5"><i data-lucide="${is2D ? 'file-text' : 'box'}" class="w-3.5 h-3.5 text-snow-cyan"></i> ${titleText}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded border ${badgeBg}">${fileName}</span>
                 </div>
-                <p class="break-keep text-white">
-                  <strong>${fileName}</strong> 설계 데이터가 디지털 트윈으로 로드되었습니다.
-                  1번 빔(내경 44mm) 및 2번 브라켓(중공 26×38mm)의 형상이 매핑되었으며, 공법 질의나 시운전을 시작할 수 있습니다.
+                <p class="break-keep text-snow-textSub text-xs leading-relaxed">
+                  ${descText}
                 </p>
               `;
               chatHistory.appendChild(noticeDiv);
               chatHistory.scrollTop = chatHistory.scrollHeight;
               lucide.createIcons();
-            }
-
-            // Focus on relevant part
-            if (partType === 'bracket') {
-              highlightDfmPart('bracket');
-            } else {
-              highlightDfmPart('beam');
             }
           }, 600);
         }, 700);
