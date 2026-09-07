@@ -117,22 +117,25 @@
 
         <button id="sideNav-trim" onclick="switchProcessTab('trim')" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all nav-item-active text-left text-sm">
           <i data-lucide="scan-line" class="w-5 h-5 text-snow-cyan shrink-0"></i>
-          <span>① 의장 3D 갭·단차 트윈</span>
+          <span class="font-medium">① 의장 3D 갭·단차 트윈</span>
         </button>
 
         <button id="sideNav-sidesill" onclick="switchProcessTab('sidesill')" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm">
-          <i data-lucide="layers" class="w-5 h-5 text-snow-textMuted shrink-0"></i>
-          <span>② 차체 사이드실 H값</span>
+          <i data-lucide="sliders" class="w-5 h-5 text-snow-textMuted shrink-0"></i>
+          <span class="font-medium">② 차체 사이드실 H값</span>
         </button>
 
         <button id="sideNav-jig" onclick="switchProcessTab('jig')" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm whitespace-nowrap">
-          <i data-lucide="component" class="w-5 h-5 text-snow-textMuted shrink-0"></i>
+          <i data-lucide="layers" class="w-5 h-5 text-snow-textMuted shrink-0"></i>
           <span class="font-medium truncate">③ 범퍼 6차종 공용화 지그</span>
         </button>
 
-        <button id="sideNav-dfm" onclick="switchProcessTab('dfm')" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm whitespace-nowrap">
-          <i data-lucide="sparkles" class="w-5 h-5 text-snow-cyan shrink-0"></i>
-          <span class="font-medium truncate">④ AI 공법 검증 (AutoJig DFM)</span>
+        <button id="sideNav-dfm" onclick="switchProcessTab('dfm')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm whitespace-nowrap group">
+          <div class="flex items-center gap-3.5 truncate">
+            <i data-lucide="sparkles" class="w-5 h-5 text-snow-cyan shrink-0 group-hover:rotate-12 transition-transform"></i>
+            <span class="font-medium truncate">④ AI 공법 검증 (DFM)</span>
+          </div>
+          <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0">개발중</span>
         </button>
       </nav>
     </div>
@@ -165,11 +168,14 @@
         </div>
 
         <!-- Mobile Process Switcher -->
-        <div class="flex lg:hidden items-center bg-snow-surface p-1 rounded-2xl border border-snow-border text-[11px] gap-1 overflow-x-auto">
-          <button id="mobTab-trim" onclick="switchProcessTab('trim')" class="px-2 py-1 rounded-xl font-bold bg-blue-600 text-white shrink-0">①의장</button>
-          <button id="mobTab-sidesill" onclick="switchProcessTab('sidesill')" class="px-2 py-1 rounded-xl text-snow-textSub font-medium shrink-0">②차체</button>
-          <button id="mobTab-jig" onclick="switchProcessTab('jig')" class="px-2 py-1 rounded-xl text-snow-textSub font-medium shrink-0">③지그</button>
-          <button id="mobTab-dfm" onclick="switchProcessTab('dfm')" class="px-2 py-1 rounded-xl text-snow-textSub font-medium shrink-0">④AI DFM</button>
+        <div class="flex lg:hidden items-center bg-snow-surface p-1 rounded-2xl border border-snow-border text-xs gap-1 overflow-x-auto">
+          <button id="mobTab-trim" onclick="switchProcessTab('trim')" class="px-2.5 py-1.5 rounded-xl font-bold bg-blue-600 text-white shrink-0">①의장</button>
+          <button id="mobTab-sidesill" onclick="switchProcessTab('sidesill')" class="px-2.5 py-1.5 rounded-xl text-snow-textSub font-medium shrink-0">②차체</button>
+          <button id="mobTab-jig" onclick="switchProcessTab('jig')" class="px-2.5 py-1.5 rounded-xl text-snow-textSub font-medium shrink-0">③지그</button>
+          <button id="mobTab-dfm" onclick="switchProcessTab('dfm')" class="px-2.5 py-1.5 rounded-xl text-snow-textSub font-medium shrink-0 flex items-center gap-1.5">
+            <span>④AI DFM</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 bg-amber-500/20 text-amber-300 rounded border border-amber-500/30">개발중</span>
+          </button>
         </div>
       </div>
 
@@ -794,103 +800,111 @@
       <!-- ================= TAB 4: AI-BASED DFM PROCESS VERIFICATION & AUTOJIG (NEW) ================= -->
       <div id="tabContent-dfm" class="space-y-8 hidden">
         
-        <!-- Header & Overview Banner (User requested R&D Vision & Domain Note) -->
-        <div class="snow-card p-6 sm:p-8 space-y-4 border-cyan-500/30 bg-gradient-to-r from-snow-surface via-[#182030] to-snow-surface">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div class="space-y-2 max-w-4xl">
-              <div class="flex items-center gap-3">
+        <!-- Header & Overview Banner (R&D Vision, Prototype Notice & Domain Note) -->
+        <div class="snow-card p-6 sm:p-8 space-y-5 border-cyan-500/30 bg-gradient-to-r from-snow-surface via-[#182030] to-snow-surface">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+            <div class="space-y-2.5 max-w-4xl">
+              <div class="flex items-center gap-3 flex-wrap">
                 <span class="p-2.5 rounded-2xl bg-cyan-950 border border-cyan-700 text-snow-cyan">
                   <i data-lucide="sparkles" class="w-6 h-6"></i>
                 </span>
-                <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   AI 기반 DFM 공법 검증 & 가상 조립 지그 생성 시스템 (AutoJig DFM)
                 </h2>
-                <span class="px-3 py-1 rounded-xl text-xs font-mono font-bold bg-cyan-950/90 text-snow-cyan border border-cyan-700">
-                  R&D Prototype
+                <span class="px-3.5 py-1 rounded-xl text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1.5 shadow-sm">
+                  <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                  R&D 프로토타입 (개발 진행 중 / PoC)
                 </span>
               </div>
-              <p class="text-xs sm:text-sm text-snow-textSub leading-relaxed break-keep">
-                <strong>LLM 기반 대화형 DFM(제조적합성) 공법 검증:</strong> 2D/3D CAD (CATIA, STEP, DXF) 도면 데이터를 AI가 파싱하여 빔-브라켓 협소 공간 조립 간섭을 사전 진단하고, 엔지니어의 자연어 대화만으로 최적의 회피 지그를 자동 설계 및 가상 시운전하는 차세대 디지털 제조 시스템입니다.
+              <p class="text-sm sm:text-base text-snow-textSub leading-relaxed break-keep">
+                <strong>LLM 대화형 DFM(제조적합성) 공법 추론:</strong> 2D/3D CAD (CATIA, STEP) 도면 데이터를 AI가 파싱하여 빔-브라켓 협소 공간 조립 간섭을 사전 진단하고, 엔지니어의 자연어 대화만으로 최적의 회피 지그를 자동 설계 및 가상 시운전하는 차세대 디지털 제조 시스템입니다.
               </p>
             </div>
             
-            <div class="flex items-center gap-2 self-start lg:self-center shrink-0">
-              <button onclick="showDrawingModal()" class="px-4 py-2.5 rounded-2xl bg-snow-surface2 hover:bg-snow-border border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shadow-sm">
+            <div class="flex items-center gap-2.5 self-start lg:self-center shrink-0">
+              <button onclick="showDrawingModal()" class="px-5 py-3 rounded-2xl bg-snow-surface2 hover:bg-snow-border border border-cyan-500/40 text-cyan-300 text-sm font-semibold flex items-center gap-2 transition-all shadow-sm">
                 <i data-lucide="file-text" class="w-4 h-4"></i>
                 <span>2D 도면 스펙 보기</span>
               </button>
             </div>
           </div>
 
-          <!-- Important Engineering Note on Automotive CAD Data Security -->
-          <div class="p-4 rounded-2xl bg-[#101114]/90 border border-snow-border text-xs text-snow-textMuted flex items-start gap-3">
-            <i data-lucide="shield-alert" class="w-4 h-4 text-snow-amber shrink-0 mt-0.5"></i>
-            <div class="leading-relaxed break-keep">
-              <span class="text-snow-amber font-bold">도면 데이터 연동 한계 및 R&D 배경 (Note):</span>
-              보안 규정상 실제 완성차 대외비 도면(CATIA CAD) 원본 데이터를 외부 웹 환경에 직접 연동할 수 없는 한계가 있어, 본 시스템은 양산 알루미늄 빔-브라켓의 핵심 기하학적 치수(빔 내경 44mm, 브라켓 폭 40mm, 중공 26×38mm)를 수학적으로 추출한 정밀 파라메트릭 3D 기하 모델로 구현하여 공법 타당성을 검증했습니다.
+          <!-- Prominent Development Status & CAD Data Security Notice -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-[#101114]/90 border border-amber-500/40 text-sm text-snow-textSub flex items-start gap-3.5 shadow-md">
+            <i data-lucide="construction" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i>
+            <div class="leading-relaxed break-keep space-y-1.5 flex-1">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <span class="text-amber-300 font-bold text-sm sm:text-base flex items-center gap-2">
+                  [개발 및 실증 진행 중인 R&D 프로토타입 안내]
+                </span>
+                <span class="text-xs px-2.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-200 border border-amber-500/40 font-mono font-bold">Status: In-Development (Beta)</span>
+              </div>
+              <p class="text-snow-textMuted text-xs sm:text-sm">
+                본 시스템은 완성차 빔-브라켓 협소 조립 공정의 간섭 문제를 대화형 LLM과 3D 디지털 트윈으로 사전 검증하는 연구개발 프로토타입입니다. 보안 규정상 대외비 CATIA 원본 CAD 파일의 직접 연동 대신, 양산 핵심 치수(내경 44mm, 중공 26×38mm, 공차 0.25mm)를 수학적으로 추출한 정밀 파라메트릭 기하 모델로 구현되었습니다.
+              </p>
             </div>
           </div>
         </div>
 
-        <!-- 3D Studio & CATIA Tree & LLM Copilot Grid -->
+        <!-- 3D Studio & CATIA Tree & LLM Copilot Grid (7:5 Ratio for Enhanced LLM Interaction) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          <!-- [LEFT 8 Cols] CATIA Parts Tree & 3D WebGL Canvas -->
-          <div class="lg:col-span-8 space-y-6">
+          <!-- [LEFT 7 Cols] CATIA Parts Tree & 3D WebGL Canvas & Kinematic Sequence Tracker -->
+          <div class="lg:col-span-7 space-y-6">
             
             <!-- CATIA Specification Tree & Part Highlighter Bar -->
-            <div class="snow-card p-5 space-y-3">
+            <div class="snow-card p-5 space-y-3.5">
               <div class="flex items-center justify-between border-b border-snow-border pb-3">
-                <div class="flex items-center gap-2 text-xs font-mono text-snow-textMuted uppercase">
+                <div class="flex items-center gap-2 text-xs font-mono text-snow-textMuted uppercase font-bold">
                   <i data-lucide="folder-tree" class="w-4 h-4 text-snow-cyan"></i>
-                  <span>CATIA Product Structure (파츠 클릭 시 3D 강조 표시)</span>
+                  <span>CATIA Product Structure (클릭 시 3D 파츠 강조)</span>
                 </div>
-                <span class="text-[11px] text-snow-textMuted font-mono">Assembly: Beam_Bracket_Assy.CATProduct</span>
+                <span class="text-xs text-snow-textMuted font-mono">Assy: Beam_Bracket_Assy.CATProduct</span>
               </div>
 
               <!-- Part Buttons (1번 빔, 2번 브라켓, 툴 A, 툴 B) -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                <button onclick="highlightDfmPart('beam')" id="dfmPartBtn-beam" class="p-3 rounded-2xl bg-blue-600/20 border border-blue-500 text-left transition-all hover:bg-blue-600/30">
-                  <div class="flex items-center justify-between text-xs mb-1">
-                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-400"></span>1번 파츠</span>
-                    <span class="text-[10px] font-mono text-blue-300">Target</span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <button onclick="highlightDfmPart('beam')" id="dfmPartBtn-beam" class="p-3.5 rounded-2xl bg-blue-600/20 border border-blue-500 text-left transition-all hover:bg-blue-600/30 shadow-sm">
+                  <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>1번 파츠</span>
+                    <span class="text-xs font-mono text-blue-300">Target</span>
                   </div>
-                  <div class="font-bold text-xs text-white truncate">알루미늄 각형 중공 빔</div>
-                  <div class="text-[10px] text-snow-textMuted font-mono mt-0.5">내경 44mm (입구홀 2개)</div>
+                  <div class="font-bold text-sm text-white truncate">알루미늄 각형 빔</div>
+                  <div class="text-xs text-snow-textMuted font-mono mt-0.5">내경 44mm (상부 홀 2개)</div>
                 </button>
 
-                <button onclick="highlightDfmPart('bracket')" id="dfmPartBtn-bracket" class="p-3 rounded-2xl bg-snow-surface2 border border-snow-border text-left transition-all hover:border-amber-500/60">
-                  <div class="flex items-center justify-between text-xs mb-1">
-                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span>2번 파츠</span>
-                    <span class="text-[10px] font-mono text-amber-300">Insert</span>
+                <button onclick="highlightDfmPart('bracket')" id="dfmPartBtn-bracket" class="p-3.5 rounded-2xl bg-snow-surface2 border border-snow-border text-left transition-all hover:border-amber-500/60 shadow-sm">
+                  <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>2번 파츠</span>
+                    <span class="text-xs font-mono text-amber-300">Insert</span>
                   </div>
-                  <div class="font-bold text-xs text-white truncate">'ㅍ'자 보강 브라켓</div>
-                  <div class="text-[10px] text-snow-textMuted font-mono mt-0.5">폭 40mm (상부 다리 2개)</div>
+                  <div class="font-bold text-sm text-white truncate">'ㅍ'자 보강 브라켓</div>
+                  <div class="text-xs text-snow-textMuted font-mono mt-0.5">폭 40mm (상부 수직다리 2개)</div>
                 </button>
 
-                <button onclick="highlightDfmPart('gripper')" id="dfmPartBtn-gripper" class="p-3 rounded-2xl bg-snow-surface2 border border-snow-border text-left transition-all hover:border-rose-500/60">
-                  <div class="flex items-center justify-between text-xs mb-1">
-                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-400"></span>Tool A</span>
-                    <span class="text-[10px] font-mono text-rose-300">기존</span>
+                <button onclick="highlightDfmPart('gripper')" id="dfmPartBtn-gripper" class="p-3.5 rounded-2xl bg-snow-surface2 border border-snow-border text-left transition-all hover:border-rose-500/60 shadow-sm">
+                  <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>Tool A</span>
+                    <span class="text-xs font-mono text-rose-300">기존</span>
                   </div>
-                  <div class="font-bold text-xs text-white truncate">외측 집게 그리퍼</div>
-                  <div class="text-[10px] text-rose-400 font-mono mt-0.5">폭 72mm (입구 간섭!)</div>
+                  <div class="font-bold text-sm text-white truncate">외측 집게 그리퍼</div>
+                  <div class="text-xs text-rose-400 font-mono mt-0.5">외폭 72mm (입구 충돌!)</div>
                 </button>
 
-                <button onclick="highlightDfmPart('coreJig')" id="dfmPartBtn-coreJig" class="p-3 rounded-2xl bg-snow-surface2 border border-snow-border text-left transition-all hover:border-cyan-500/60">
-                  <div class="flex items-center justify-between text-xs mb-1">
-                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400"></span>Tool B</span>
-                    <span class="text-[10px] font-mono text-cyan-300">AI설계</span>
+                <button onclick="highlightDfmPart('coreJig')" id="dfmPartBtn-coreJig" class="p-3.5 rounded-2xl bg-snow-surface2 border border-snow-border text-left transition-all hover:border-cyan-500/60 shadow-sm">
+                  <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>Tool B</span>
+                    <span class="text-xs font-mono text-cyan-300">AI설계</span>
                   </div>
-                  <div class="font-bold text-xs text-white truncate">'ㅁ'자 코어 푸시 지그</div>
-                  <div class="text-[10px] text-cyan-400 font-mono mt-0.5">공차 0.25mm (내경 결합)</div>
+                  <div class="font-bold text-sm text-white truncate">'ㅁ'자 코어 지그</div>
+                  <div class="text-xs text-cyan-400 font-mono mt-0.5">공차 0.25mm (내경 결합)</div>
                 </button>
               </div>
             </div>
 
             <!-- 3D WebGL Viewport Container -->
             <div class="snow-card p-6 flex flex-col relative overflow-hidden">
-              <div class="flex items-center justify-between mb-4 z-10">
+              <div class="flex items-center justify-between mb-4 z-10 flex-wrap gap-3">
                 <div class="flex items-center gap-2.5">
                   <span class="relative flex h-2.5 w-2.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -902,32 +916,32 @@
                 </div>
 
                 <div class="flex items-center gap-2 bg-snow-surface2 p-1.5 rounded-2xl border border-snow-border text-xs">
-                  <button id="dfmXrayBtn" onclick="toggleDfmXRay()" class="px-3 py-1 rounded-xl bg-blue-600 text-white font-bold border border-blue-400 flex items-center gap-1.5 font-mono text-xs transition-all shadow-sm">
+                  <button id="dfmXrayBtn" onclick="toggleDfmXRay()" class="px-3.5 py-1.5 rounded-xl bg-blue-600 text-white font-bold border border-blue-400 flex items-center gap-1.5 font-mono text-xs transition-all shadow-sm">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                     <span id="dfmXrayText">X-Ray 투시 ON</span>
                   </button>
                   <span class="text-snow-border">|</span>
-                  <button onclick="setDfmCameraView('iso')" class="px-2.5 py-1 rounded-xl hover:bg-snow-border text-snow-textSub font-medium">Iso</button>
-                  <button onclick="setDfmCameraView('front')" class="px-2.5 py-1 rounded-xl hover:bg-snow-border text-snow-textSub font-medium">Front</button>
-                  <button onclick="setDfmCameraView('top')" class="px-2.5 py-1 rounded-xl hover:bg-snow-border text-snow-textSub font-medium">Top</button>
+                  <button onclick="setDfmCameraView('iso')" class="px-3 py-1.5 rounded-xl hover:bg-snow-border text-snow-textSub font-medium">Iso</button>
+                  <button onclick="setDfmCameraView('front')" class="px-3 py-1.5 rounded-xl hover:bg-snow-border text-snow-textSub font-medium">Front</button>
+                  <button onclick="setDfmCameraView('top')" class="px-3 py-1.5 rounded-xl hover:bg-snow-border text-snow-textSub font-medium">Top</button>
                 </div>
               </div>
 
               <!-- 3D Canvas -->
-              <div id="dfmThreeContainer" class="w-full h-[440px] sm:h-[480px] bg-[#101114] rounded-3xl relative overflow-hidden border border-snow-border cursor-grab active:cursor-grabbing shadow-inner">
+              <div id="dfmThreeContainer" class="w-full h-[450px] sm:h-[480px] bg-[#101114] rounded-3xl relative overflow-hidden border border-snow-border cursor-grab active:cursor-grabbing shadow-inner">
                 <!-- Floating Realtime Alert Overlay -->
                 <div id="dfmAlertOverlay" class="absolute top-4 left-4 z-10 bg-snow-surface/90 backdrop-blur-md px-4 py-3 rounded-2xl border border-snow-border text-xs font-mono space-y-1.5 pointer-events-none shadow-xl max-w-md">
-                  <div id="dfmAlertTitle" class="text-snow-cyan font-bold flex items-center gap-2 text-sm">
+                  <div id="dfmAlertTitle" class="text-snow-cyan font-bold flex items-center gap-2 text-sm sm:text-base">
                     <i data-lucide="check-circle" class="w-4 h-4"></i>
                     <span>DFM READY : 부품 배치 완료 (체결 대기)</span>
                   </div>
-                  <div id="dfmAlertDesc" class="text-snow-textMuted text-xs leading-relaxed">
+                  <div id="dfmAlertDesc" class="text-snow-textMuted text-xs sm:text-sm leading-relaxed">
                     1번 중공 빔 입구 측면에 2번 'ㅍ'자 브라켓이 대기 중입니다.
                   </div>
                 </div>
 
                 <!-- 3D Legend -->
-                <div class="absolute bottom-4 left-4 z-10 text-xs text-snow-textMuted font-mono flex items-center gap-2.5 pointer-events-none bg-snow-surface/85 px-3 py-1.5 rounded-xl border border-snow-border">
+                <div class="absolute bottom-4 left-4 z-10 text-xs text-snow-textMuted font-mono flex items-center gap-2.5 pointer-events-none bg-snow-surface/85 px-3.5 py-2 rounded-xl border border-snow-border">
                   <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> 1번 빔 (내경44)</span>
                   <span>•</span>
                   <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> 2번 'ㅍ'브라켓</span>
@@ -938,7 +952,7 @@
 
               <!-- Scenario Interactive Control Bar -->
               <div class="mt-4 flex flex-wrap gap-2.5 items-center justify-between">
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2.5">
                   <button onclick="runConventionalGripperTest()" class="px-4 py-2.5 rounded-2xl bg-rose-950/80 hover:bg-rose-900 border border-rose-700 text-rose-200 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95">
                     <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-400"></i>
                     <span>❌ 기존 외측 그리퍼 간섭 테스트 (입구 충돌)</span>
@@ -946,7 +960,7 @@
 
                   <button onclick="runAutoCoreJigGenerate()" class="px-4 py-2.5 rounded-2xl bg-cyan-950/90 hover:bg-cyan-900 border border-cyan-700 text-cyan-200 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95">
                     <i data-lucide="sparkles" class="w-4 h-4 text-snow-cyan"></i>
-                    <span>✨ AI 'ㅁ'자 코어 지그 생성 & 도킹</span>
+                    <span>✨ AI 'ㅁ'자 코어 지그 도킹</span>
                   </button>
 
                   <button onclick="runFullDfmKinematicSimulation()" class="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-600/30 active:scale-95">
@@ -961,97 +975,113 @@
               </div>
             </div>
 
-          </div>
-
-          <!-- [RIGHT 4 Cols] LLM Engineering Copilot & DFM Kinematic Timeline -->
-          <div class="lg:col-span-4 space-y-6">
-            
-            <!-- AI Engineering Copilot Chat Console -->
-            <div class="snow-card p-6 space-y-4 border-cyan-500/40 bg-gradient-to-b from-snow-surface to-[#162030]">
-              <div class="flex items-center justify-between border-b border-snow-border pb-3.5">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-2xl bg-cyan-950 border border-cyan-700 flex items-center justify-center text-snow-cyan">
-                    <i data-lucide="bot" class="w-4 h-4"></i>
-                  </div>
-                  <div>
-                    <h3 class="text-sm sm:text-base font-bold text-white">DFM AI 엔지니어링 코파일럿</h3>
-                    <span class="text-[10px] text-snow-cyan font-mono block">LLM Function Calling Engine</span>
-                  </div>
-                </div>
-                <span class="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-emerald-950 text-snow-emerald border border-emerald-800">ONLINE</span>
+            <!-- 4-Step Kinematic Sequence Tracker -->
+            <div class="snow-card p-5 space-y-3.5">
+              <div class="flex items-center justify-between border-b border-snow-border pb-3">
+                <h4 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <i data-lucide="activity" class="w-4 h-4 text-snow-cyan"></i>
+                  <span>4단계 조립 공정 시퀀스 상태</span>
+                </h4>
+                <span id="dfmSeqStatusBadge" class="text-xs font-mono px-2.5 py-0.5 rounded-lg bg-snow-surface2 text-snow-textMuted border border-snow-border">대기 중</span>
               </div>
 
-              <!-- Chat Message History Container -->
-              <div id="dfmChatHistory" class="space-y-3 max-h-[300px] overflow-y-auto pr-1 text-xs leading-relaxed font-sans">
-                <!-- Message 1: System Welcome -->
-                <div class="p-3.5 rounded-2xl bg-[#101114]/90 border border-snow-border text-snow-textSub space-y-1.5">
-                  <div class="text-snow-cyan font-bold flex items-center gap-1.5 font-mono text-[11px]">
-                    <i data-lucide="cpu" class="w-3.5 h-3.5"></i> AutoJig Copilot v2.4
+              <div class="space-y-2.5 text-xs sm:text-sm">
+                <div id="dfmStep-1" class="p-3 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
+                  <span class="font-medium text-snow-textSub">Step 1. 지그-브라켓 내경 결합 (Docking)</span>
+                  <span class="font-mono text-xs text-snow-textMuted">공차 0.25mm Slip-Fit</span>
+                </div>
+                <div id="dfmStep-2" class="p-3 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
+                  <span class="font-medium text-snow-textSub">Step 2. 빔 입구 통과 & 내부 정위치 전진 (Push)</span>
+                  <span class="font-mono text-xs text-snow-textMuted">간섭 0.0mm</span>
+                </div>
+                <div id="dfmStep-3" class="p-3 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
+                  <span class="font-medium text-snow-textSub">Step 3. 상부 홀 수직다리 돌출 & 2개소 스폿 용접 (Weld)</span>
+                  <span class="font-mono text-xs text-snow-textMuted">수직 다리 2개소 동시 용접</span>
+                </div>
+                <div id="dfmStep-4" class="p-3 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
+                  <span class="font-medium text-snow-textSub">Step 4. 지그 후진 인출 탈거 (Retraction)</span>
+                  <span class="font-mono text-xs text-snow-textMuted">구배각 0.8° 원활 탈거</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- [RIGHT 5 Cols] Expanded LLM Engineering Copilot Console -->
+          <div class="lg:col-span-5 space-y-6">
+            
+            <!-- AI Engineering Copilot Chat Console -->
+            <div class="snow-card p-6 space-y-5 border-cyan-500/40 bg-gradient-to-b from-snow-surface to-[#162030] shadow-xl">
+              <div class="flex items-center justify-between border-b border-snow-border pb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-2xl bg-cyan-950 border border-cyan-700 flex items-center justify-center text-snow-cyan shadow-sm">
+                    <i data-lucide="bot" class="w-5 h-5"></i>
                   </div>
-                  <p class="break-keep">
-                    안녕하세요! 1번 중공 빔과 2번 'ㅍ'자 브라켓의 조립성(DFM) 검토 준비가 완료되었습니다. 질문을 입력하거나 아래 추천 프롬프트를 클릭하세요.
+                  <div>
+                    <h3 class="text-base sm:text-lg font-bold text-white">DFM AI 엔지니어링 코파일럿</h3>
+                    <span class="text-xs text-snow-cyan font-mono block font-semibold">LLM 대화 기반 공법 추론 & 자동 설계 엔진</span>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg text-xs font-mono bg-emerald-950 text-snow-emerald border border-emerald-800 font-bold">ONLINE</span>
+              </div>
+
+              <!-- Chat Message History Container (Expanded Height) -->
+              <div id="dfmChatHistory" class="space-y-3.5 h-[390px] overflow-y-auto pr-1 text-sm leading-relaxed font-sans">
+                <!-- Message 1: System Welcome -->
+                <div class="p-4 rounded-2xl bg-[#101114]/90 border border-snow-border text-snow-textSub space-y-2">
+                  <div class="text-snow-cyan font-bold flex items-center gap-2 font-mono text-xs">
+                    <i data-lucide="cpu" class="w-4 h-4"></i> AutoJig Copilot v2.4 (LLM Reasoning Core)
+                  </div>
+                  <p class="break-keep text-xs sm:text-sm leading-relaxed">
+                    안녕하세요, 생산기술 엔지니어님! 1번 중공 빔과 2번 'ㅍ'자 브라켓의 조립성(DFM) 검증을 위한 AI 코파일럿입니다. 공법 질문을 입력하시거나 아래 <strong>추천 엔지니어링 프롬프트</strong>를 클릭하시면 3D 시뮬레이션과 연동됩니다.
                   </p>
                 </div>
               </div>
 
-              <!-- Recommended Question Quick Button (User's Exact Requirement!) -->
+              <!-- Recommended Question Quick Card (Prominently Highlighted!) -->
               <div class="pt-1">
-                <div class="text-[11px] text-snow-textMuted font-bold mb-1.5 flex items-center gap-1">
-                  <i data-lucide="help-circle" class="w-3 h-3 text-snow-cyan"></i>
-                  <span>추천 엔지니어링 프롬프트:</span>
+                <div class="text-xs text-snow-textMuted font-bold mb-2 flex items-center gap-1.5 uppercase">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-snow-cyan"></i>
+                  <span>추천 엔지니어링 프롬프트 (클릭 시 자동 시운전):</span>
                 </div>
-                <button onclick="triggerUserPromptPreset()" class="w-full text-left p-3 rounded-2xl bg-blue-950/60 hover:bg-blue-900/80 border border-blue-700/80 text-blue-200 text-xs transition-all shadow-sm group">
-                  <div class="flex items-start gap-2">
+                <button onclick="triggerUserPromptPreset()" class="w-full text-left p-3.5 rounded-2xl bg-blue-950/60 hover:bg-blue-900/80 border border-blue-700/80 text-blue-100 text-xs sm:text-sm transition-all shadow-md group active:scale-[0.98]">
+                  <div class="flex items-start gap-2.5">
                     <i data-lucide="message-square" class="w-4 h-4 text-snow-cyan shrink-0 mt-0.5 group-hover:scale-110 transition-transform"></i>
-                    <span class="break-keep font-medium">
+                    <span class="break-keep font-medium leading-relaxed">
                       "2번 파츠 1번 안에 넣어야 하는데 그리퍼 형식의 지그는 안 들어가니까 혹시 2번 내부 안에 ㅁ모양으로 딱 맞게 끼워서 전진시킬 수 있는 지그를 디자인하고 시뮬레이션해보자"
                     </span>
                   </div>
                 </button>
               </div>
 
-              <!-- Chat Input Box -->
-              <div class="pt-2 flex items-center gap-2">
-                <input id="dfmChatInput" type="text" placeholder="공법 질문을 입력하세요..." class="flex-1 bg-[#101114] border border-snow-border rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-cyan-500 transition-colors" onkeydown="if(event.key==='Enter') sendCustomDfmChat()" />
-                <button onclick="sendCustomDfmChat()" class="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition-all shrink-0">
-                  <i data-lucide="send" class="w-4 h-4"></i>
+              <!-- Quick Prompt Action Chips -->
+              <div class="flex flex-wrap gap-2 pt-0.5">
+                <button onclick="sendQuickPrompt('외측 그리퍼 간섭 원인')" class="px-3 py-1.5 rounded-xl bg-snow-surface2 hover:bg-snow-border text-xs text-snow-textSub border border-snow-border transition-all">
+                  💡 외측 그리퍼 간섭 분석
+                </button>
+                <button onclick="sendQuickPrompt('2D CAD 치수 스펙')" class="px-3 py-1.5 rounded-xl bg-snow-surface2 hover:bg-snow-border text-xs text-snow-textSub border border-snow-border transition-all">
+                  📐 2D CAD 치수 스펙
+                </button>
+                <button onclick="sendQuickPrompt('4단계 조립 시운전')" class="px-3 py-1.5 rounded-xl bg-snow-surface2 hover:bg-snow-border text-xs text-snow-textSub border border-snow-border transition-all">
+                  ▶️ 4단계 조립 시운전
                 </button>
               </div>
-            </div>
 
-            <!-- 4-Step Kinematic Sequence Tracker -->
-            <div class="snow-card p-5 space-y-3">
-              <div class="flex items-center justify-between border-b border-snow-border pb-2.5">
-                <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <i data-lucide="activity" class="w-4 h-4 text-snow-cyan"></i>
-                  <span>4단계 조립 공정 시퀀스 상태</span>
-                </h4>
-                <span id="dfmSeqStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-snow-surface2 text-snow-textMuted border border-snow-border">대기 중</span>
-              </div>
-
-              <div class="space-y-2 text-xs">
-                <div id="dfmStep-1" class="p-2.5 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
-                  <span class="font-medium text-snow-textSub">Step 1. 지그-브라켓 내경 결합 (Docking)</span>
-                  <span class="font-mono text-[11px] text-snow-textMuted">공차 0.25mm</span>
-                </div>
-                <div id="dfmStep-2" class="p-2.5 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
-                  <span class="font-medium text-snow-textSub">Step 2. 빔 입구 통과 & 내부 전진 (Push)</span>
-                  <span class="font-mono text-[11px] text-snow-textMuted">간섭 0.0mm</span>
-                </div>
-                <div id="dfmStep-3" class="p-2.5 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
-                  <span class="font-medium text-snow-textSub">Step 3. 상부 홀 다리 돌출 & 스폿 용접 (Weld)</span>
-                  <span class="font-mono text-[11px] text-snow-textMuted">용접점 2개소</span>
-                </div>
-                <div id="dfmStep-4" class="p-2.5 rounded-xl bg-snow-surface2 border border-snow-border flex items-center justify-between transition-all">
-                  <span class="font-medium text-snow-textSub">Step 4. 지그 후진 인출 탈거 (Retraction)</span>
-                  <span class="font-mono text-[11px] text-snow-textMuted">구배각 0.8°</span>
-                </div>
+              <!-- Chat Input Box (Enlarged) -->
+              <div class="pt-2 flex items-center gap-2.5">
+                <input id="dfmChatInput" type="text" placeholder="공법 질의나 지그 설계 요청을 입력하세요..." class="flex-1 bg-[#101114] border border-snow-border rounded-2xl px-4 py-3 text-sm text-white outline-none focus:border-cyan-500 transition-colors shadow-inner" onkeydown="if(event.key==='Enter') sendCustomDfmChat()" />
+                <button onclick="sendCustomDfmChat()" class="px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shrink-0 flex items-center gap-1.5 shadow-md">
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <span class="hidden sm:inline">질의</span>
+                </button>
               </div>
             </div>
 
           </div>
 
         </div>
+
+      </div>
 
       </div>
 
@@ -1074,20 +1104,20 @@
               <span>DRAWING NO: DWG-ALU-BEAM-07-REV3</span>
               <span>SCALE: 1:1 [MM]</span>
             </div>
-            <div class="grid grid-cols-2 gap-4 text-snow-textSub">
+            <div class="grid grid-cols-2 gap-4 text-snow-textSub text-xs sm:text-sm">
               <div>
                 <span class="text-white font-bold block mb-1">■ 1번 알루미늄 각형 중공 빔</span>
-                <p>• 외곽 단면: 54mm × 54mm</p>
-                <p>• 내경 단면: <strong class="text-snow-amber">44mm × 44mm (협소 구간)</strong></p>
+                <p>• 외곽 단면: 54mm × 54mm (벽두께 5mm)</p>
+                <p>• 내경 단면: <strong class="text-snow-amber">44mm × 44mm (협소 진입 구간)</strong></p>
                 <p>• 전장 길이: 260mm</p>
-                <p>• 상부 슬롯 홀: 12mm × 24mm (2개소, 입구로부터 20mm 안쪽)</p>
+                <p>• 상부 슬롯 홀: 12mm × 24mm (2개소, 폭 방향 좌/우 양옆 대칭 배치)</p>
               </div>
               <div>
                 <span class="text-white font-bold block mb-1">■ 2번 'ㅍ'자 보강 브라켓</span>
                 <p>• 외곽 폭: 40mm (빔 내경 삽입 가능)</p>
                 <p>• 중앙 중공('ㅁ'자): <strong class="text-snow-cyan">26mm(W) × 38mm(H)</strong></p>
-                <p>• 상부 용접 다리: 폭 10mm, 돌출 높이 8mm (2개)</p>
-                <p>• 결합 공차: 편측 0.25mm / 구배각 0.8°</p>
+                <p>• 상부 수직 돌출 다리: 폭 10mm, 높이 8mm (2개, 폭 방향 양옆 배치)</p>
+                <p>• 결합 공차: 편측 0.25mm Slip-Fit / 구배각 0.8°</p>
               </div>
             </div>
           </div>
@@ -1141,12 +1171,14 @@
       const breadcrumb = document.getElementById('currentBreadcrumb');
 
       // Reset all navigation states
-      [trimNav, sideNav, jigNav, dfmNav].forEach(btn => {
+      [trimNav, sideNav, jigNav].forEach(btn => {
         if (btn) btn.className = 'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm whitespace-nowrap';
       });
-      [mobTrim, mobSide, mobJig, mobDfm].forEach(btn => {
-        if (btn) btn.className = 'px-2 py-1 rounded-xl text-snow-textSub font-medium shrink-0';
+      if (dfmNav) dfmNav.className = 'w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all text-snow-textSub hover:bg-snow-surface hover:text-white text-left text-sm whitespace-nowrap group';
+      [mobTrim, mobSide, mobJig].forEach(btn => {
+        if (btn) btn.className = 'px-2.5 py-1.5 rounded-xl text-snow-textSub font-medium shrink-0';
       });
+      if (mobDfm) mobDfm.className = 'px-2.5 py-1.5 rounded-xl text-snow-textSub font-medium shrink-0 flex items-center gap-1.5';
 
       if (trimContent) trimContent.classList.add('hidden');
       if (sideContent) sideContent.classList.add('hidden');
@@ -1155,26 +1187,26 @@
 
       if (tabId === 'trim') {
         if (trimNav) trimNav.className = 'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all nav-item-active text-left text-sm';
-        if (mobTrim) mobTrim.className = 'px-2 py-1 rounded-xl font-bold bg-blue-600 text-white shrink-0';
+        if (mobTrim) mobTrim.className = 'px-2.5 py-1.5 rounded-xl font-bold bg-blue-600 text-white shrink-0';
         if (breadcrumb) breadcrumb.textContent = '의장 6축 로봇 3D 갭·단차 트윈';
         if (trimContent) trimContent.classList.remove('hidden');
         setTimeout(() => { onWindowResize(); if (spcTrimChart) spcTrimChart.resize(); }, 50);
       } else if (tabId === 'sidesill') {
         if (sideNav) sideNav.className = 'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all nav-item-active text-left text-sm';
-        if (mobSide) mobSide.className = 'px-2 py-1 rounded-xl font-bold bg-blue-600 text-white shrink-0';
+        if (mobSide) mobSide.className = 'px-2.5 py-1.5 rounded-xl font-bold bg-blue-600 text-white shrink-0';
         if (breadcrumb) breadcrumb.textContent = '차체 사이드실 H값 최적화 시뮬레이터';
         if (sideContent) sideContent.classList.remove('hidden');
         setTimeout(() => { renderTwinVisualizer(); if (chartInstance) chartInstance.resize(); }, 50);
       } else if (tabId === 'jig') {
         if (jigNav) jigNav.className = 'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all nav-item-active text-left text-sm whitespace-nowrap';
-        if (mobJig) mobJig.className = 'px-2 py-1 rounded-xl font-bold bg-blue-600 text-white shrink-0';
+        if (mobJig) mobJig.className = 'px-2.5 py-1.5 rounded-xl font-bold bg-blue-600 text-white shrink-0';
         if (breadcrumb) breadcrumb.textContent = '6차종 범퍼 공용화 지그 3D 시뮬레이터';
         if (jigContent) jigContent.classList.remove('hidden');
         setTimeout(() => { onJigWindowResize(); updateBumperJigState(); }, 50);
       } else if (tabId === 'dfm') {
-        if (dfmNav) dfmNav.className = 'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all nav-item-active text-left text-sm whitespace-nowrap';
-        if (mobDfm) mobDfm.className = 'px-2 py-1 rounded-xl font-bold bg-blue-600 text-white shrink-0';
-        if (breadcrumb) breadcrumb.textContent = 'AI 기반 DFM 공법 검증 (AutoJig DFM)';
+        if (dfmNav) dfmNav.className = 'w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all nav-item-active text-left text-sm whitespace-nowrap group';
+        if (mobDfm) mobDfm.className = 'px-2.5 py-1.5 rounded-xl font-bold bg-blue-600 text-white shrink-0 flex items-center gap-1.5';
+        if (breadcrumb) breadcrumb.textContent = 'AI 기반 DFM 공법 검증 (AutoJig DFM) [R&D 프로토타입 / 개발중]';
         if (dfmContent) dfmContent.classList.remove('hidden');
         setTimeout(() => {
           onDfmWindowResize();
@@ -2763,16 +2795,18 @@
       // Right Wall (Z = +0.435)
       addBeamBox(2.8, 0.96, 0.09, 1.4, 0, +0.435);
 
-      // Top Wall with 2 slot holes (Hole 1 at X=0.55, Hole 2 at X=1.25, each length 0.30, width 0.36)
-      // Top segment before Hole 1 (X: 0 to 0.40)
-      addBeamBox(0.40, 0.09, 0.78, 0.20, 0.435, 0);
-      // Top segment between Hole 1 & 2 (X: 0.70 to 1.10)
-      addBeamBox(0.40, 0.09, 0.78, 0.90, 0.435, 0);
-      // Top segment after Hole 2 (X: 1.40 to 2.80)
-      addBeamBox(1.40, 0.09, 0.78, 2.10, 0.435, 0);
-      // Side rims around Hole 1 & 2 (X: 0.40 to 1.40)
-      addBeamBox(1.00, 0.09, 0.21, 0.90, 0.435, -0.285);
-      addBeamBox(1.00, 0.09, 0.21, 0.90, 0.435, +0.285);
+      // Top Wall with 2 slot holes side-by-side along Z at docking station X = 0.70
+      // Station X range: 0.54 to 0.86 (length 0.32). Holes at Z = -0.22 and Z = +0.22
+      // Top segment before holes (X: 0 to 0.54)
+      addBeamBox(0.54, 0.09, 0.78, 0.27, 0.435, 0);
+      // Center bridge between holes (X: 0.54 to 0.86, Z: -0.11 to +0.11, width 0.22)
+      addBeamBox(0.32, 0.09, 0.22, 0.70, 0.435, 0);
+      // Left outer rim (X: 0.54 to 0.86, Z: -0.39 to -0.33, width 0.06)
+      addBeamBox(0.32, 0.09, 0.06, 0.70, 0.435, -0.36);
+      // Right outer rim (X: 0.54 to 0.86, Z: +0.33 to +0.39, width 0.06)
+      addBeamBox(0.32, 0.09, 0.06, 0.70, 0.435, +0.36);
+      // Top segment after holes (X: 0.86 to 2.80, length 1.94)
+      addBeamBox(1.94, 0.09, 0.78, 1.83, 0.435, 0);
 
       // Entrance Outer Lip / Chamfer Ring at X=0.0
       const entranceRingGeom = new THREE.BoxGeometry(0.04, 1.02, 1.02);
@@ -2781,12 +2815,12 @@
       entranceRing.position.set(0.02, 0, 0);
       dfmBeamGroup.add(entranceRing);
 
-      // Hole Bezel Rings (Spot Weld Target Rings)
-      [0.55, 1.25].forEach((hx, idx) => {
-        const ringGeom = new THREE.BoxGeometry(0.32, 0.02, 0.38);
+      // Hole Bezel Rings (Spot Weld Target Rings) side-by-side along Z at X=0.70
+      [-0.22, +0.22].forEach(hz => {
+        const ringGeom = new THREE.BoxGeometry(0.34, 0.02, 0.22);
         const ringMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, emissive: 0x0369a1, emissiveIntensity: 0.6 });
         const ringMesh = new THREE.Mesh(ringGeom, ringMat);
-        ringMesh.position.set(hx, 0.485, 0);
+        ringMesh.position.set(0.70, 0.485, hz);
         dfmBeamGroup.add(ringMesh);
       });
 
@@ -2819,22 +2853,22 @@
       addBracketBox(0.82, 0.48, 0.13, 0, 0, -0.285); // left plate
       addBracketBox(0.82, 0.48, 0.13, 0, 0, +0.285); // right plate
 
-      // Two Upward Protruding Legs (상부 돌출 다리 2개: Hole 1 & Hole 2 진입용)
-      // Centers at local X = -0.35 and +0.35. Height extends to Y=0.48
-      const leg1 = addBracketBox(0.24, 0.26, 0.28, -0.35, 0.42, 0);
-      const leg2 = addBracketBox(0.24, 0.26, 0.28, +0.35, 0.42, 0);
+      // Two Upward Protruding Legs (상부 폭방향 나란히 돌출된 다리 2개: 'ㅍ'자 형상의 수직 다리)
+      // Local X = 0.0, Y = 0.42, Z = -0.22 및 +0.22 (폭방향 양옆 대칭 배치). 높이 Y=0.55까지 상부 슬롯홀 관통
+      const leg1 = addBracketBox(0.24, 0.26, 0.18, 0.0, 0.42, -0.22);
+      const leg2 = addBracketBox(0.24, 0.26, 0.18, 0.0, 0.42, +0.22);
 
-      // Weld Nuggets on top of legs
-      const nuggetGeom = new THREE.CylinderGeometry(0.10, 0.10, 0.03, 16);
+      // Weld Nuggets on top of legs (폭방향 2개소 스폿 용접 너겟)
+      const nuggetGeom = new THREE.CylinderGeometry(0.08, 0.08, 0.03, 16);
       const nuggetMat1 = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.2 });
       const nuggetMat2 = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.2 });
       dfmWeldNugget1 = new THREE.Mesh(nuggetGeom, nuggetMat1);
-      dfmWeldNugget1.position.set(-0.35, 0.55, 0);
+      dfmWeldNugget1.position.set(0.0, 0.55, -0.22);
       dfmWeldNugget1.visible = false;
       dfmBracketGroup.add(dfmWeldNugget1);
 
       dfmWeldNugget2 = new THREE.Mesh(nuggetGeom, nuggetMat2);
-      dfmWeldNugget2.position.set(+0.35, 0.55, 0);
+      dfmWeldNugget2.position.set(0.0, 0.55, +0.22);
       dfmWeldNugget2.visible = false;
       dfmBracketGroup.add(dfmWeldNugget2);
 
@@ -2917,9 +2951,9 @@
       dfmCoreJigGroup.position.set(-2.7, 0, 0);
       dfmScene.add(dfmCoreJigGroup);
 
-      // 5. SPOT WELDING GUN ELECTRODES (2개소 상부 하강 전극봉)
+      // 5. SPOT WELDING GUN ELECTRODES (2개소 상부 하강 전극봉 - 폭방향 Z = -0.22, +0.22)
       const gunMat = new THREE.MeshStandardMaterial({ color: 0xf97316, metalness: 0.8, roughness: 0.25 });
-      function createSpotGun(x) {
+      function createSpotGun(z) {
         const gunGroup = new THREE.Group();
         const bodyGeom = new THREE.CylinderGeometry(0.05, 0.05, 0.5, 16);
         const bodyMesh = new THREE.Mesh(bodyGeom, gunMat);
@@ -2933,23 +2967,23 @@
         tipMesh.position.set(0, -0.06, 0);
         gunGroup.add(tipMesh);
 
-        gunGroup.position.set(x, 1.2, 0);
+        gunGroup.position.set(0.70, 1.2, z);
         return gunGroup;
       }
-      dfmSpotGun1 = createSpotGun(0.55);
-      dfmSpotGun2 = createSpotGun(1.25);
+      dfmSpotGun1 = createSpotGun(-0.22);
+      dfmSpotGun2 = createSpotGun(+0.22);
       dfmScene.add(dfmSpotGun1);
       dfmScene.add(dfmSpotGun2);
 
-      // 6. SPARK PARTICLES SYSTEM (스폿 용접 불꽃 파티클)
+      // 6. SPARK PARTICLES SYSTEM (스폿 용접 불꽃 파티클 - 폭방향 2개소)
       dfmSparksGroup = new THREE.Group();
       const sparkCount = 60;
       const sparkGeom = new THREE.BufferGeometry();
       const sparkPositions = new Float32Array(sparkCount * 3);
       for (let i = 0; i < sparkCount; i++) {
-        sparkPositions[i * 3] = (Math.random() - 0.5) * 0.4;
-        sparkPositions[i * 3 + 1] = (Math.random() - 0.5) * 0.4;
-        sparkPositions[i * 3 + 2] = (Math.random() - 0.5) * 0.4;
+        sparkPositions[i * 3] = (Math.random() - 0.5) * 0.3;
+        sparkPositions[i * 3 + 1] = (Math.random() - 0.5) * 0.3;
+        sparkPositions[i * 3 + 2] = (Math.random() - 0.5) * 0.3;
       }
       sparkGeom.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
       const sparkMat = new THREE.PointsMaterial({
@@ -2960,9 +2994,9 @@
         blending: THREE.AdditiveBlending
       });
       const sparks1 = new THREE.Points(sparkGeom, sparkMat);
-      sparks1.position.set(0.55, 0.55, 0);
+      sparks1.position.set(0.70, 0.55, -0.22);
       const sparks2 = new THREE.Points(sparkGeom.clone(), sparkMat.clone());
-      sparks2.position.set(1.25, 0.55, 0);
+      sparks2.position.set(0.70, 0.55, +0.22);
       dfmSparksGroup.add(sparks1);
       dfmSparksGroup.add(sparks2);
       dfmSparksGroup.visible = false;
@@ -3032,8 +3066,8 @@
         dfmGripperGroup.position.set(-1.5, 0, 0);
         dfmGripperGroup.visible = false;
       }
-      if (dfmSpotGun1) dfmSpotGun1.position.set(0.55, 1.2, 0);
-      if (dfmSpotGun2) dfmSpotGun2.position.set(1.25, 1.2, 0);
+      if (dfmSpotGun1) dfmSpotGun1.position.set(0.70, 1.2, -0.22);
+      if (dfmSpotGun2) dfmSpotGun2.position.set(0.70, 1.2, +0.22);
       if (dfmWeldNugget1) dfmWeldNugget1.visible = false;
       if (dfmWeldNugget2) dfmWeldNugget2.visible = false;
       if (dfmCollisionMarkerGroup) dfmCollisionMarkerGroup.visible = false;
@@ -3192,12 +3226,12 @@
           if (elapsed - 1.2 < 0.05) {
             setStepStatus(1, 'done');
             setStepStatus(2, 'active');
-            updateDfmAlert('🚀 STEP 2: 빔 입구 통과 & 내부 정위치 전진 (Push)', '지그와 브라켓이 일체화되어 빔 입구(내경 44mm)를 간섭량 0mm로 통과하여 용접 정위치로 전진합니다.', 'cyan');
+            updateDfmAlert('🚀 STEP 2: 빔 입구 통과 & 내부 정위치 전진 (Push)', '지그와 브라켓이 일체화되어 빔 입구(내경 44mm)를 간섭량 0mm로 통과하여 용접 정위치(X=0.70m)로 전진합니다.', 'cyan');
             playBeep(640);
           }
           const p = Math.min(1, (elapsed - 1.2) / 2.0);
           const easeP = 0.5 - 0.5 * Math.cos(p * Math.PI);
-          const currentX = -1.5 + easeP * 2.40;
+          const currentX = -1.5 + easeP * 2.20;
           if (dfmCoreJigGroup) dfmCoreJigGroup.position.x = currentX;
           if (dfmBracketGroup) dfmBracketGroup.position.x = currentX;
           dfmAnimTimer = requestAnimationFrame(stepAnimation);
@@ -3206,11 +3240,11 @@
           if (elapsed - 3.2 < 0.05) {
             setStepStatus(2, 'done');
             setStepStatus(3, 'active');
-            updateDfmAlert('⚡ STEP 3: 상부 슬롯홀 다리 돌출 & 2개소 스폿 용접 (Weld)', '브라켓 상부 2개 다리가 빔 상부 홀로 관통 돌출되었으며 전극봉이 하강하여 스폿 용접을 실시합니다.', 'amber');
+            updateDfmAlert('⚡ STEP 3: 상부 슬롯홀 다리 돌출 & 2개소 스폿 용접 (Weld)', '브라켓 상부 2개 다리가 빔 상부 대칭 홀(폭방향 Z=±0.22)로 관통 돌출되었으며 전극봉이 하강하여 스폿 용접을 실시합니다.', 'amber');
             dfmSparkActive = true;
           }
-          if (dfmCoreJigGroup) dfmCoreJigGroup.position.x = 0.90;
-          if (dfmBracketGroup) dfmBracketGroup.position.x = 0.90;
+          if (dfmCoreJigGroup) dfmCoreJigGroup.position.x = 0.70;
+          if (dfmBracketGroup) dfmBracketGroup.position.x = 0.70;
 
           // Spot guns descending & sparking
           const weldPhase = elapsed - 3.2;
@@ -3253,10 +3287,10 @@
           }
           const p = Math.min(1, (elapsed - 5.4) / 1.6);
           const easeP = 0.5 - 0.5 * Math.cos(p * Math.PI);
-          // Tool B retracts from X = 0.90 to -2.7
-          if (dfmCoreJigGroup) dfmCoreJigGroup.position.x = 0.90 - easeP * 3.60;
-          // Bracket stays firmly welded at X = 0.90!
-          if (dfmBracketGroup) dfmBracketGroup.position.x = 0.90;
+          // Tool B retracts from X = 0.70 to -2.7
+          if (dfmCoreJigGroup) dfmCoreJigGroup.position.x = 0.70 - easeP * 3.40;
+          // Bracket stays firmly welded at X = 0.70!
+          if (dfmBracketGroup) dfmBracketGroup.position.x = 0.70;
           dfmAnimTimer = requestAnimationFrame(stepAnimation);
         } else {
           // COMPLETE
@@ -3367,6 +3401,12 @@
 
     /* --- DFM AI COPILOT CHAT ENGINE --- */
 
+    function sendQuickPrompt(query) {
+      const input = document.getElementById('dfmChatInput');
+      if (input) input.value = query;
+      sendCustomDfmChat();
+    }
+
     function triggerUserPromptPreset() {
       const userPrompt = "2번 파츠 1번 안에 넣어야 하는데 그리퍼 형식의 지그는 안 들어가니까 혹시 2번 내부 안에 ㅁ모양으로 딱 맞게 끼워서 전진시킬 수 있는 지그를 디자인하고 시뮬레이션해보자";
       appendUserChatMessage(userPrompt);
@@ -3376,8 +3416,8 @@
       const typingId = 'typing-' + Date.now();
       const typingDiv = document.createElement('div');
       typingDiv.id = typingId;
-      typingDiv.className = 'p-3 rounded-2xl bg-[#101114]/90 border border-cyan-500/40 text-snow-cyan flex items-center gap-2 text-xs font-mono animate-pulse';
-      typingDiv.innerHTML = '<i data-lucide="sparkles" class="w-3.5 h-3.5 animate-spin"></i><span>AutoJig AI가 CAD 파라메트릭 공법을 분석하고 지그를 설계 중입니다...</span>';
+      typingDiv.className = 'p-3.5 rounded-2xl bg-[#101114]/90 border border-cyan-500/40 text-snow-cyan flex items-center gap-2.5 text-xs font-mono animate-pulse';
+      typingDiv.innerHTML = '<i data-lucide="sparkles" class="w-4 h-4 animate-spin text-snow-cyan"></i><span>AutoJig AI Copilot: CAD 파라메트릭 간섭 분석 및 \'ㅁ\'자 코어 지그 설계 중...</span>';
       chatHistory.appendChild(typingDiv);
       chatHistory.scrollTop = chatHistory.scrollHeight;
       lucide.createIcons();
@@ -3387,27 +3427,35 @@
         if (typingEl) typingEl.remove();
 
         const responseHtml = `
-          <div class="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/60 text-snow-textSub space-y-2.5">
-            <div class="text-snow-cyan font-bold flex items-center justify-between text-xs border-b border-cyan-800/60 pb-1.5">
-              <span class="flex items-center gap-1.5 font-mono"><i data-lucide="cpu" class="w-3.5 h-3.5"></i> AutoJig Copilot 응답</span>
-              <span class="text-[10px] bg-cyan-900/80 px-2 py-0.5 rounded text-cyan-200 font-mono">CAD-DFM Solved</span>
+          <div class="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/60 text-snow-textSub space-y-3">
+            <div class="text-snow-cyan font-bold flex items-center justify-between text-xs border-b border-cyan-800/60 pb-2">
+              <span class="flex items-center gap-2 font-mono text-sm"><i data-lucide="cpu" class="w-4 h-4"></i> AutoJig Copilot v2.4 (LLM Reasoning)</span>
+              <span class="text-xs bg-cyan-900/80 px-2.5 py-0.5 rounded text-cyan-200 font-mono font-bold">DFM Optimization Complete</span>
             </div>
-            <div class="space-y-1.5 text-xs">
-              <p class="text-white font-semibold">
+            <div class="space-y-2 text-xs sm:text-sm">
+              <p class="text-white font-semibold leading-relaxed">
                 요청하신 공법 간섭 문제를 진단하고, <strong>'ㅁ'자 슬림 코어 푸시 지그(Tool B)</strong>를 자동 생성했습니다!
               </p>
-              <div class="bg-[#101114]/80 p-2.5 rounded-xl border border-snow-border font-mono text-[11px] space-y-1 text-snow-textSub">
-                <div class="text-rose-400 font-bold">1. 기존 외측 그리퍼 간섭 원인:</div>
-                <div class="pl-2">• 1번 중공 빔 입구 통과 내경: 44.0mm</div>
-                <div class="pl-2">• 기존 Tool A 외측 그리퍼 외폭: 72.0mm (간섭량: <span class="text-rose-400 font-bold">+28.0mm 정면 충돌 ⚠️</span>)</div>
-                <div class="text-snow-cyan font-bold pt-1">2. AI 지그 파라메트릭 설계 사양 (Tool B):</div>
-                <div class="pl-2">• 브라켓 내부 'ㅁ'자 중공 규격: 26.0mm(W) × 38.0mm(H)</div>
-                <div class="pl-2">• 코어 맨드릴 외경: <span class="text-snow-cyan font-bold">25.5mm × 37.5mm (편측 공차 0.25mm Slip-Fit)</span></div>
-                <div class="pl-2">• 탈거 구배각: 0.8° (용접 완료 후 고착 없는 원활한 인출 보장)</div>
-                <div class="pl-2">• 빔 상부 슬롯홀 2개소 정렬 및 스폿용접 동기화</div>
+              <div class="bg-[#101114]/90 p-3 rounded-xl border border-snow-border font-mono text-xs space-y-1.5 text-snow-textSub">
+                <div class="text-rose-400 font-bold flex items-center gap-1.5">
+                  <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i>
+                  <span>1. 기존 외측 집게 그리퍼(Tool A) 간섭 진단:</span>
+                </div>
+                <div class="pl-4">• 1번 중공 빔 입구 통과 내경: 44.0mm</div>
+                <div class="pl-4">• 기존 Tool A 외측 그리퍼 외폭: 72.0mm (간섭량: <span class="text-rose-400 font-bold">+28.0mm 진입 차단 충돌 ⚠️</span>)</div>
+                
+                <div class="text-snow-cyan font-bold pt-1.5 flex items-center gap-1.5">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                  <span>2. AI 지그 파라메트릭 자동 설계 사양 (Tool B):</span>
+                </div>
+                <div class="pl-4">• 2번 브라켓 내부 'ㅁ'자 중공: 26.0mm(W) × 38.0mm(H)</div>
+                <div class="pl-4">• 맨드릴 코어 외경: <span class="text-snow-cyan font-bold">25.5mm × 37.5mm (편측 공차 0.25mm Slip-Fit)</span></div>
+                <div class="pl-4">• 고착 방지 구배각: 0.8° (스폿 용접 후 원활한 역방향 인출 탈거 보장)</div>
+                <div class="pl-4">• 상부 수직 2개 다리(폭방향 Z=±12mm) 빔 상부 슬롯홀 관통 & 전극봉 하강 스폿용접 동기화</div>
               </div>
-              <p class="text-snow-cyan text-[11px] font-medium pt-1">
-                🚀 생성된 지그로 <strong>4단계 키네마틱 시뮬레이션(도킹 ➔ 진입 ➔ 점용접 ➔ 인출)</strong>을 자동 가동합니다.
+              <p class="text-snow-cyan text-xs font-semibold pt-1 flex items-center gap-1.5">
+                <i data-lucide="play-circle" class="w-4 h-4 text-snow-cyan"></i>
+                <span>생성된 지그로 <strong>4단계 키네마틱 시뮬레이션(도킹 ➔ 진입 ➔ 스폿용접 ➔ 인출)</strong>을 자동 가동합니다.</span>
               </p>
             </div>
           </div>
@@ -3436,8 +3484,8 @@
       const typingId = 'typing-' + Date.now();
       const typingDiv = document.createElement('div');
       typingDiv.id = typingId;
-      typingDiv.className = 'p-3 rounded-2xl bg-[#101114]/90 border border-cyan-500/40 text-snow-cyan flex items-center gap-2 text-xs font-mono animate-pulse';
-      typingDiv.innerHTML = '<i data-lucide="sparkles" class="w-3.5 h-3.5 animate-spin"></i><span>엔지니어링 질의 분석 중...</span>';
+      typingDiv.className = 'p-3.5 rounded-2xl bg-[#101114]/90 border border-cyan-500/40 text-snow-cyan flex items-center gap-2.5 text-xs font-mono animate-pulse';
+      typingDiv.innerHTML = '<i data-lucide="sparkles" class="w-4 h-4 animate-spin text-snow-cyan"></i><span>엔지니어링 질의 분석 중...</span>';
       chatHistory.appendChild(typingDiv);
       chatHistory.scrollTop = chatHistory.scrollHeight;
       lucide.createIcons();
@@ -3447,27 +3495,33 @@
         if (typingEl) typingEl.remove();
 
         let reply = "";
+        let actionTag = "";
         const lower = text.toLowerCase();
         if (lower.includes('도면') || lower.includes('cad') || lower.includes('치수') || lower.includes('스펙')) {
-          reply = "2D/3D CATIA CAD 도면 치수 스펙 모달을 띄워드립니다. 1번 빔 내경 44mm, 2번 브라켓 외폭 40mm, 중공 26×38mm의 정밀 파라메트릭 규격을 확인하실 수 있습니다.";
+          reply = "<strong>2D/3D CATIA CAD 도면 치수 스펙</strong>을 불러왔습니다.<br>• 1번 빔 내경: 44.0mm × 44.0mm<br>• 2번 브라켓 외폭: 40.0mm / 내부 'ㅁ'자 중공: 26.0mm × 38.0mm<br>• 상부 수직 다리: 폭방향 2개소 대칭 배치 (Z = ±12mm)<br>• 슬롯홀 규격: 12mm × 24mm (2개소)<br>상세 3각법 도면 모달을 화면에 표시합니다.";
+          actionTag = "CAD Spec Loaded";
           showDrawingModal();
-        } else if (lower.includes('간섭') || lower.includes('충돌') || lower.includes('그리퍼')) {
-          reply = "외측 집게 그리퍼(Tool A)는 외폭 72mm로 빔 입구 외벽(44mm)에 정면 충돌합니다. 3D 뷰어에서 충돌 간섭 테스트를 실행합니다.";
+        } else if (lower.includes('간섭') || lower.includes('충돌') || lower.includes('그리퍼') || lower.includes('외측')) {
+          reply = "<strong>기존 Tool A 외측 그리퍼 간섭 원인 분석:</strong><br>외측 집게 그리퍼(외폭 72.0mm)는 1번 알루미늄 중공 빔의 입구 내경(44.0mm)보다 <strong>28.0mm 넓어</strong> 입구 외벽에 정면 충돌합니다. 3D 뷰어에서 충돌 간섭 시뮬레이션을 실행합니다.";
+          actionTag = "Interference Simulation";
           runConventionalGripperTest();
-        } else if (lower.includes('시뮬') || lower.includes('지그') || lower.includes('용접') || lower.includes('코어')) {
-          reply = "AI가 설계한 'ㅁ'자 코어 푸시 지그(Tool B)를 이용해 4단계 완전 조립 및 상부 2개소 스폿용접 시뮬레이션을 실행합니다.";
+        } else if (lower.includes('시뮬') || lower.includes('지그') || lower.includes('용접') || lower.includes('코어') || lower.includes('시운전')) {
+          reply = "AI가 설계한 <strong>'ㅁ'자 슬림 코어 푸시 지그(Tool B)</strong>를 호출하여 4단계 키네마틱 시운전을 시작합니다.<br>① 내경 도킹 ➔ ② 빔 내부 전진 ➔ ③ 상부 슬롯홀 다리 돌출 & 2개소 스폿용접 ➔ ④ 탈거 구배각 후진 탈거";
+          actionTag = "Kinematics Triggered";
           runFullDfmKinematicSimulation();
         } else {
-          reply = `엔지니어님께서 문의하신 '${text}' 공법에 대해 검토했습니다. 본 알루미늄 빔-브라켓 협소 공정은 외측 클램핑 대신 '내경 삽입형 코어 지그'를 적용하여 간섭량을 0mm로 해소하고, 빔 상부 2개 슬롯홀을 통해 브라켓 상부 다리를 돌출시켜 정밀 스폿 용접을 구현하도록 최적화되었습니다.`;
+          reply = `엔지니어님께서 문의하신 <em>"${text}"</em> 공법에 대해 DFM 추론을 수행했습니다.<br>본 알루미늄 빔-브라켓 협소 공정은 외측 클램핑 대신 <strong>'내경 삽입형 코어 지그(Tool B)'</strong>를 적용하여 간섭량을 0mm로 소거하고, 빔 상부 대칭 슬롯홀 2개소로 브라켓 상부 다리를 관통 돌출시켜 2개소 정밀 스폿 용접을 구현하도록 최적화되었습니다.`;
+          actionTag = "LLM DFM Analysis";
         }
 
         const respDiv = document.createElement('div');
-        respDiv.className = 'p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/50 text-snow-textSub space-y-1.5 text-xs';
+        respDiv.className = 'p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/50 text-snow-textSub space-y-2 text-xs sm:text-sm';
         respDiv.innerHTML = `
-          <div class="text-snow-cyan font-bold flex items-center gap-1.5 font-mono text-[11px]">
-            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> AutoJig Copilot
+          <div class="text-snow-cyan font-bold flex items-center justify-between font-mono text-xs border-b border-cyan-900/60 pb-1.5">
+            <span class="flex items-center gap-1.5"><i data-lucide="cpu" class="w-3.5 h-3.5"></i> AutoJig Copilot</span>
+            <span class="text-[10px] bg-cyan-900/60 px-2 py-0.5 rounded text-cyan-200">${actionTag}</span>
           </div>
-          <p class="break-keep text-white">${reply}</p>
+          <p class="break-keep text-white leading-relaxed">${reply}</p>
         `;
         chatHistory.appendChild(respDiv);
         chatHistory.scrollTop = chatHistory.scrollHeight;
