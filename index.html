@@ -1270,6 +1270,18 @@
             </div>
           </div>
 
+          <!-- Instant Verification Helper: Direct Sample Download & Live Test -->
+          <div class="p-3.5 rounded-2xl bg-cyan-950/50 border border-cyan-500/40 flex items-center justify-between flex-wrap gap-2.5 text-xs">
+            <div class="flex items-center gap-2 text-cyan-300 font-mono text-[11px]">
+              <i data-lucide="info" class="w-4 h-4 text-cyan-400"></i>
+              <span>도면 파일이 없으신가요? <strong>실제 .stl 파일</strong>을 다운받아 바로 드래그해보세요:</span>
+            </div>
+            <button onclick="downloadSampleStlFile()" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-95">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>테스트용 샘플 .stl 다운로드</span>
+            </button>
+          </div>
+
           <!-- Sample Presets (Both 3D STL and 2D PDF Ready) -->
           <div class="space-y-2">
             <span class="text-xs font-mono font-bold text-snow-textMuted uppercase flex items-center gap-1.5">
@@ -3891,6 +3903,41 @@
         }
       }
       return buffer;
+    }
+
+    function downloadSampleStlFile() {
+      // Create a hollow beam geometry with upper slot holes
+      const shape = new THREE.Shape();
+      const w = 1.2, h = 0.8;
+      shape.moveTo(-w/2, -h/2);
+      shape.lineTo(w/2, -h/2);
+      shape.lineTo(w/2, h/2);
+      shape.lineTo(-w/2, h/2);
+      shape.closePath();
+
+      const hole = new THREE.Path();
+      const hw = 0.88, hh = 0.48;
+      hole.moveTo(-hw/2, -hh/2);
+      hole.lineTo(hw/2, -hh/2);
+      hole.lineTo(hw/2, hh/2);
+      hole.lineTo(-hw/2, hh/2);
+      hole.closePath();
+      shape.holes.push(hole);
+
+      const geom = new THREE.ExtrudeGeometry(shape, { depth: 2.6, bevelEnabled: false });
+      geom.rotateY(Math.PI / 2);
+
+      const buffer = createBinaryStlFromGeometry(geom);
+      const blob = new Blob([buffer], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'AL_BEAM_SAMPLE_GEN4.stl';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      playBeep(850);
     }
 
     function loadCustomGeometryIntoScene(geom, fileName, meta = {}) {
