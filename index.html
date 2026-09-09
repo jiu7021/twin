@@ -67,10 +67,14 @@
       font-size: 15px;
     }
 
-    ::-webkit-scrollbar { width: 7px; height: 7px; }
-    ::-webkit-scrollbar-track { background: #141416; }
-    ::-webkit-scrollbar-thumb { background: #2f3037; border-radius: 6px; }
-    ::-webkit-scrollbar-thumb:hover { background: #454752; }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #2f3037 transparent;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
 
     .snow-card {
       background-color: #202126;
@@ -91,6 +95,23 @@
       border: 1px solid rgba(37, 99, 235, 0.6);
       color: #ffffff;
       font-weight: 700;
+    }
+
+    /* iPad 12.9" Optimized Viewport Mode */
+    body.ipad-mode {
+      font-size: 14.5px;
+    }
+    body.ipad-mode .max-w-7xl {
+      max-width: 100% !important;
+      padding-left: 1.25rem !important;
+      padding-right: 1.25rem !important;
+    }
+    body.ipad-mode aside {
+      width: 17rem !important;
+      padding: 1.25rem !important;
+    }
+    body.ipad-mode button, body.ipad-mode .snow-card {
+      touch-action: manipulation;
     }
   </style>
 </head>
@@ -143,6 +164,30 @@
       </nav>
     </div>
 
+    <!-- Engineer Profile Card at Sidebar Bottom -->
+    <div class="pt-4 border-t border-snow-border space-y-3">
+      <div class="p-3.5 rounded-2xl bg-snow-surface border border-snow-border/80 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-500/20 shrink-0">
+          JW
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-sm font-bold text-white truncate">양지우</span>
+            <span class="flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              ONLINE
+            </span>
+          </div>
+          <div class="text-[11px] text-snow-cyan font-medium truncate">생산기술 엔지니어</div>
+          <div class="text-[10px] text-snow-textMuted font-mono truncate">공법 개발 · 설비 T:O · CPS</div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between text-[11px] font-mono text-snow-textMuted px-1">
+        <span class="truncate text-snow-textMuted">대주코레스 실무 T:O 기반</span>
+        <span class="text-snow-cyan font-bold">12.9" iPad Ready</span>
+      </div>
+    </div>
+
   </aside>
 
   <!-- ================= MAIN CONTENT WRAPPER ================= -->
@@ -169,7 +214,13 @@
         </div>
       </div>
 
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-3">
+        <!-- PC vs iPad 12.9" Viewport Switcher -->
+        <button id="viewModeToggleBtn" onclick="toggleViewMode()" class="px-3.5 py-2 rounded-2xl bg-snow-surface hover:bg-snow-surface2 border border-snow-border text-xs font-mono font-bold text-snow-textSub flex items-center gap-2 transition-all shadow-md active:scale-95" title="PC / iPad 뷰포트 전환">
+          <i id="viewModeIcon" data-lucide="tablet" class="w-4 h-4 text-snow-cyan"></i>
+          <span id="viewModeText">iPad 12" 뷰</span>
+        </button>
+
         <button id="soundBtn" onclick="toggleAudio()" class="p-2.5 rounded-2xl bg-snow-surface hover:bg-snow-surface2 border border-snow-border text-snow-textSub transition-all shadow-md" title="효과음 토글">
           <i id="soundIcon" data-lucide="volume-2" class="w-5 h-5 text-snow-cyan"></i>
         </button>
@@ -1922,6 +1973,9 @@
     }
 
     function setupCustomOrbit(container) {
+      container.style.touchAction = 'none';
+      let prevTouchDist = null;
+
       container.addEventListener('mousedown', (e) => {
         isDragging = true;
         prevMouseX = e.clientX;
@@ -1942,6 +1996,41 @@
         e.preventDefault();
         sphericalRadius = Math.max(2.5, Math.min(9.0, sphericalRadius + e.deltaY * 0.005));
         updateCameraSpherical();
+      }, { passive: false });
+
+      // iPad / Touch Support (1-finger rotate, 2-finger pinch zoom)
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          prevMouseX = e.touches[0].clientX;
+          prevMouseY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+          isDragging = false;
+          prevTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        }
+      }, { passive: false });
+      window.addEventListener('touchend', () => {
+        isDragging = false;
+        prevTouchDist = null;
+      });
+      container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && isDragging) {
+          e.preventDefault();
+          const deltaX = e.touches[0].clientX - prevMouseX;
+          const deltaY = e.touches[0].clientY - prevMouseY;
+          prevMouseX = e.touches[0].clientX;
+          prevMouseY = e.touches[0].clientY;
+          sphericalTheta -= deltaX * 0.008;
+          sphericalPhi = Math.max(0.15, Math.min(Math.PI / 2 - 0.05, sphericalPhi - deltaY * 0.008));
+          updateCameraSpherical();
+        } else if (e.touches.length === 2 && prevTouchDist) {
+          e.preventDefault();
+          const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          const pinchDelta = prevTouchDist - dist;
+          prevTouchDist = dist;
+          sphericalRadius = Math.max(2.5, Math.min(9.0, sphericalRadius + pinchDelta * 0.015));
+          updateCameraSpherical();
+        }
       }, { passive: false });
     }
 
@@ -2726,6 +2815,9 @@
     }
 
     function setupJigOrbit(container) {
+      container.style.touchAction = 'none';
+      let prevJigTouchDist = null;
+
       container.addEventListener('mousedown', (e) => {
         isJigDragging = true;
         prevJigMouseX = e.clientX;
@@ -2746,6 +2838,41 @@
         e.preventDefault();
         jigSphericalRadius = Math.max(2.5, Math.min(8.5, jigSphericalRadius + e.deltaY * 0.005));
         updateJigCameraSpherical();
+      }, { passive: false });
+
+      // iPad / Touch Support (1-finger rotate, 2-finger pinch zoom)
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isJigDragging = true;
+          prevJigMouseX = e.touches[0].clientX;
+          prevJigMouseY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+          isJigDragging = false;
+          prevJigTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        }
+      }, { passive: false });
+      window.addEventListener('touchend', () => {
+        isJigDragging = false;
+        prevJigTouchDist = null;
+      });
+      container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && isJigDragging) {
+          e.preventDefault();
+          const deltaX = e.touches[0].clientX - prevJigMouseX;
+          const deltaY = e.touches[0].clientY - prevJigMouseY;
+          prevJigMouseX = e.touches[0].clientX;
+          prevJigMouseY = e.touches[0].clientY;
+          jigSphericalTheta -= deltaX * 0.008;
+          jigSphericalPhi = Math.max(0.15, Math.min(Math.PI / 2 - 0.05, jigSphericalPhi - deltaY * 0.008));
+          updateJigCameraSpherical();
+        } else if (e.touches.length === 2 && prevJigTouchDist) {
+          e.preventDefault();
+          const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          const pinchDelta = prevJigTouchDist - dist;
+          prevJigTouchDist = dist;
+          jigSphericalRadius = Math.max(2.5, Math.min(8.5, jigSphericalRadius + pinchDelta * 0.015));
+          updateJigCameraSpherical();
+        }
       }, { passive: false });
     }
 
@@ -3176,6 +3303,9 @@
     }
 
     function setupDfmOrbit(container) {
+      container.style.touchAction = 'none';
+      let prevDfmTouchDist = null;
+
       container.addEventListener('mousedown', (e) => {
         isDfmDragging = true;
         isDfmCamTransitioning = false;
@@ -3204,6 +3334,48 @@
         dfmSphericalRadius = Math.max(1.8, Math.min(8.5, dfmSphericalRadius + e.deltaY * 0.004));
         dfmTargetRadius = dfmSphericalRadius;
         updateDfmCameraSpherical();
+      }, { passive: false });
+
+      // iPad / Touch Support (1-finger rotate, 2-finger pinch zoom)
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDfmDragging = true;
+          isDfmCamTransitioning = false;
+          dfmTargetTheta = dfmSphericalTheta;
+          dfmTargetPhi = dfmSphericalPhi;
+          dfmTargetRadius = dfmSphericalRadius;
+          prevDfmMouseX = e.touches[0].clientX;
+          prevDfmMouseY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+          isDfmDragging = false;
+          prevDfmTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        }
+      }, { passive: false });
+      window.addEventListener('touchend', () => {
+        isDfmDragging = false;
+        prevDfmTouchDist = null;
+      });
+      container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && isDfmDragging) {
+          e.preventDefault();
+          const deltaX = e.touches[0].clientX - prevDfmMouseX;
+          const deltaY = e.touches[0].clientY - prevDfmMouseY;
+          prevDfmMouseX = e.touches[0].clientX;
+          prevDfmMouseY = e.touches[0].clientY;
+          dfmSphericalTheta -= deltaX * 0.008;
+          dfmSphericalPhi = Math.max(0.15, Math.min(Math.PI / 2 - 0.05, dfmSphericalPhi - deltaY * 0.008));
+          dfmTargetTheta = dfmSphericalTheta;
+          dfmTargetPhi = dfmSphericalPhi;
+          updateDfmCameraSpherical();
+        } else if (e.touches.length === 2 && prevDfmTouchDist) {
+          e.preventDefault();
+          const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          const pinchDelta = prevDfmTouchDist - dist;
+          prevDfmTouchDist = dist;
+          dfmSphericalRadius = Math.max(1.8, Math.min(8.5, dfmSphericalRadius + pinchDelta * 0.015));
+          dfmTargetRadius = dfmSphericalRadius;
+          updateDfmCameraSpherical();
+        }
       }, { passive: false });
     }
 
@@ -5868,6 +6040,39 @@
       const iconName = audioEnabled ? 'volume-2' : 'volume-x';
       document.getElementById('soundIcon').setAttribute('data-lucide', iconName);
       lucide.createIcons();
+    }
+
+    let currentViewMode = 'pc';
+    function toggleViewMode() {
+      currentViewMode = (currentViewMode === 'pc') ? 'ipad' : 'pc';
+      const body = document.body;
+      const btn = document.getElementById('viewModeToggleBtn');
+      const text = document.getElementById('viewModeText');
+      const icon = document.getElementById('viewModeIcon');
+
+      if (currentViewMode === 'ipad') {
+        body.classList.add('ipad-mode');
+        if (btn) {
+          btn.className = 'px-3.5 py-2 rounded-2xl bg-blue-600/25 border border-blue-500 text-xs font-mono font-bold text-blue-300 flex items-center gap-2 transition-all shadow-md shadow-blue-500/20 active:scale-95';
+        }
+        if (text) text.textContent = 'iPad 12" 뷰 (ON)';
+        if (icon) icon.setAttribute('data-lucide', 'tablet');
+      } else {
+        body.classList.remove('ipad-mode');
+        if (btn) {
+          btn.className = 'px-3.5 py-2 rounded-2xl bg-snow-surface hover:bg-snow-surface2 border border-snow-border text-xs font-mono font-bold text-snow-textSub flex items-center gap-2 transition-all shadow-md active:scale-95';
+        }
+        if (text) text.textContent = 'iPad 12" 뷰';
+        if (icon) icon.setAttribute('data-lucide', 'tablet');
+      }
+      lucide.createIcons();
+      setTimeout(() => {
+        onWindowResize();
+        onJigWindowResize();
+        onDfmWindowResize();
+        if (spcTrimChart) spcTrimChart.resize();
+        if (chartInstance) chartInstance.resize();
+      }, 60);
     }
 
     /* ============================================================
